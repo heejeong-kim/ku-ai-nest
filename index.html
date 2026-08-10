@@ -27,10 +27,11 @@
     -webkit-font-smoothing:antialiased; font-size:19px; scroll-behavior:smooth;
     word-break:keep-all;
   }
-  .wrap{max-width:1120px;margin:0 auto;padding:0 22px 100px}
+  .wrap{max-width:1440px;margin:0 auto;padding:0 24px 100px}
 
   header{background:var(--card);border-bottom:1px solid var(--line);padding:44px 0 0}
-  .head-inner{max-width:1120px;margin:0 auto;padding:0 22px}
+  .head-inner{max-width:1440px;margin:0 auto;padding:0 24px}
+  .sub{max-width:1000px}
   .eyebrow{font-size:16px;letter-spacing:.06em;color:var(--ink3);font-weight:600;margin-bottom:12px}
   h1{font-size:36px;font-weight:700;letter-spacing:-.02em;line-height:1.34}
   .sub{color:var(--ink2);margin-top:14px;font-size:18.5px}
@@ -59,7 +60,8 @@
   h3{font-size:20px;font-weight:700;margin:32px 0 12px;color:var(--ink)}
   h3:first-of-type{margin-top:24px}
   h4{font-size:19px;font-weight:700;margin:2px 0 10px;color:var(--ink);line-height:1.55}
-  p{margin:12px 0;color:var(--ink2);font-size:18.5px}
+  /* 본문 문단은 한 줄 길이를 제한해 가독성 유지 · 표는 전체 폭 사용 */
+  p{margin:12px 0;color:var(--ink2);font-size:18.5px;max-width:1020px}
   .lead{margin-top:12px}
   strong{color:var(--ink);font-weight:700}
   code{background:var(--bg);border:1px solid var(--line);border-radius:5px;
@@ -94,15 +96,29 @@
   .lo-r b{color:var(--accent);font-weight:700}
 
   .toc{background:var(--card);border:1px solid var(--line);border-radius:16px;
-       padding:16px 18px;margin-top:22px;position:sticky;top:0;z-index:30;
+       padding:20px 22px;margin-top:22px;position:sticky;top:0;z-index:30;
        box-shadow:0 3px 14px rgba(0,0,0,.06)}
-  .toc-label{font-size:15px;font-weight:600;color:var(--ink3);margin-bottom:11px}
-  .toc-row{display:flex;gap:8px;flex-wrap:wrap}
-  .toc-row a{display:inline-flex;align-items:center;gap:9px;background:var(--bg);border:1px solid var(--line);
-    border-radius:11px;font-size:16.5px;font-weight:600;color:var(--ink2);text-decoration:none;
-    padding:11px 16px;transition:.15s;line-height:1.35}
-  .toc-row a:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-bg)}
-  .toc-row a .tn{font-size:14.5px;font-weight:700;color:var(--accent)}
+  .toc-label{font-size:16px;font-weight:700;color:var(--ink);margin-bottom:14px;text-align:center}
+  /* 카드 가로 폭을 균등하게 — 펫 4열(4+3) / 에코 3열(3+3) */
+  .toc-row{display:grid;gap:10px}
+  #pet .toc-row{grid-template-columns:repeat(4,1fr)}
+  #eco .toc-row{grid-template-columns:repeat(3,1fr)}
+  .toc-row a{
+    min-width:0;
+    display:flex;align-items:center;gap:11px;
+    background:var(--accent-bg);border:1.5px solid var(--accent-line);
+    border-radius:13px;font-size:17px;font-weight:600;color:var(--ink);text-decoration:none;
+    padding:15px 18px;transition:.18s;line-height:1.45;position:relative
+  }
+  .toc-row a .tn{flex:none;font-size:15px;font-weight:700;color:var(--accent);
+                 background:var(--card);border:1px solid var(--accent-line);
+                 border-radius:8px;padding:3px 9px;transition:.18s}
+  .toc-row a .tx{flex:1;min-width:0}
+  .toc-row a::after{content:"→";flex:none;font-size:17px;color:var(--accent);opacity:.5;transition:.18s}
+  .toc-row a:hover{background:var(--accent);border-color:var(--accent);color:#fff;
+                   transform:translateY(-2px);box-shadow:0 6px 16px rgba(0,0,0,.14)}
+  .toc-row a:hover .tn{background:rgba(255,255,255,.22);border-color:transparent;color:#fff}
+  .toc-row a:hover::after{color:#fff;opacity:1;transform:translateX(3px)}
 
   .flow{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 6px}
   .flow .f{flex:1;min-width:180px;border-radius:12px;padding:13px 16px;border:1px solid}
@@ -157,7 +173,8 @@
   .tl-out b{color:var(--accent);font-weight:600}
 
   .callout{background:var(--accent-bg);border:1px solid var(--accent-line);
-           border-radius:13px;padding:19px 22px;margin:18px 0;font-size:18px;color:var(--ink2);line-height:1.75}
+           border-radius:13px;padding:19px 22px;margin:18px 0;font-size:18px;color:var(--ink2);line-height:1.75;max-width:1080px}
+  .callout p,.callout ul.dot,.callout ol.num{max-width:none}
   .callout .t{font-weight:700;color:var(--ink);display:block;margin-bottom:6px}
   .callout.warn{background:#fff8ea;border-color:#f0d9ae}
   .callout.warn .t{color:#8a5a00}
@@ -167,7 +184,7 @@
   .phase.work .callout{border-color:var(--wk-line)}
   .phase .callout.warn{background:#fff8ea;border-color:#f0d9ae}
 
-  .prompt{position:relative;background:#1c2026;border-radius:13px;padding:22px 24px;margin:16px 0}
+  .prompt{position:relative;background:#1c2026;border-radius:13px;padding:22px 24px;margin:16px 0;max-width:1080px}
   .prompt pre{color:#e6eaee;font-size:16.5px;line-height:1.8;white-space:pre-wrap;word-break:break-word;
        font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
   .cp{position:absolute;top:13px;right:13px;background:#353c45;color:#ccd2d8;border:none;
@@ -175,7 +192,7 @@
   .cp:hover{background:#474f59;color:#fff}
   .cp.done{background:#2c7a52;color:#fff}
 
-  .chk{list-style:none;margin:14px 0}
+  .chk{list-style:none;margin:14px 0;max-width:1020px}
   .chk li{position:relative;padding:11px 0 11px 36px;font-size:18px;color:var(--ink2);
           border-bottom:1px dashed var(--line);line-height:1.7}
   .chk li:last-child{border-bottom:none}
@@ -184,9 +201,9 @@
   .phase.work .chk li::before{border-color:var(--wk)}
   .phase.together .chk li::before{border-color:var(--tg)}
 
-  ul.dot{margin:14px 0 14px 24px}
+  ul.dot{margin:14px 0 14px 24px;max-width:1020px}
   ul.dot li{margin:9px 0;color:var(--ink2);font-size:18px;line-height:1.72}
-  ol.num{margin:14px 0 14px 26px}
+  ol.num{margin:14px 0 14px 26px;max-width:1020px}
   ol.num li{margin:10px 0;color:var(--ink2);font-size:18px;line-height:1.72}
 
   .online{display:inline-block;font-size:14.5px;font-weight:600;background:#eef4fb;color:#2563a8;
@@ -202,6 +219,8 @@
   @media(max-width:880px){
     .acc-wrap{grid-template-columns:1fr}
     .blocks{grid-template-columns:1fr}
+    #pet .toc-row{grid-template-columns:repeat(2,1fr)}
+    #eco .toc-row{grid-template-columns:repeat(2,1fr)}
     .lo-row{flex-wrap:wrap;gap:6px}
     .lo-r{width:100%;padding-left:86px}
   }
@@ -217,7 +236,8 @@
     .tab{padding:14px 17px;font-size:17.5px}
     .toc{padding:11px 13px}
     .toc-label{display:none}
-    .toc-row a{font-size:16px;padding:9px 13px}
+    #pet .toc-row,#eco .toc-row{grid-template-columns:1fr}
+    .toc-row a{font-size:16px;padding:12px 14px}
     .tl-row{flex-direction:column;gap:6px}
     .tl-time{width:auto}
     table{font-size:16.5px}
@@ -355,15 +375,15 @@
   </section>
 
   <div class="toc">
-    <div class="toc-label">단계별 상세 보기</div>
+    <div class="toc-label">수업 일정</div>
     <div class="toc-row">
-      <a href="#pet-s1"><span class="tn">01</span>산업 이슈 분석</a>
-      <a href="#pet-s2"><span class="tn">02</span>데이터 수집·분석</a>
-      <a href="#pet-s3"><span class="tn">03</span>서비스 기획서 구성</a>
-      <a href="#pet-s4"><span class="tn">04</span>[실습] 데이터 분석 + 기획서</a>
-      <a href="#pet-s5"><span class="tn">05</span>[실습] 앱 시제품</a>
-      <a href="#pet-s6"><span class="tn">06</span>[실습] 홍보 영상</a>
-      <a href="#pet-s7"><span class="tn">07</span>과제·코칭</a>
+      <a href="#pet-s1"><span class="tn">01</span><span class="tx">산업 이슈 분석</span></a>
+      <a href="#pet-s2"><span class="tn">02</span><span class="tx">데이터 수집·분석</span></a>
+      <a href="#pet-s3"><span class="tn">03</span><span class="tx">서비스 기획서 구성</span></a>
+      <a href="#pet-s4"><span class="tn">04</span><span class="tx">[실습] 데이터 분석 + 기획서</span></a>
+      <a href="#pet-s5"><span class="tn">05</span><span class="tx">[실습] 앱 시제품</span></a>
+      <a href="#pet-s6"><span class="tn">06</span><span class="tx">[실습] 홍보 영상</span></a>
+      <a href="#pet-s7"><span class="tn">07</span><span class="tx">과제·코칭</span></a>
     </div>
   </div>
 
@@ -524,7 +544,7 @@
 
   <!-- 03 -->
   <section id="pet-s3">
-    <h2><span class="num-badge">03</span>서비스 기획서의 구성 요소</h2>
+    <h2><span class="num-badge">03</span>서비스 기획서의 구성 요소 이해</h2>
     <div class="flow">
       <div class="f e"><div class="fl">기획서 구성 예시</div><div class="fv">막연한 문장이 <b>질문 3번으로 바뀌는</b> 과정</div></div>
       <div class="f t"><div class="fl">함께 해보기</div><div class="fv">문제 정의 <b>한 문장만</b> 같이 고쳐 씀</div></div>
@@ -579,7 +599,7 @@
 
   <!-- 04 -->
   <section id="pet-s4">
-    <h2><span class="num-badge">04</span>[실습] 펫 시장 데이터 분석 + 서비스 기획서</h2>
+    <h2><span class="num-badge">04</span>[실습] AI 리서치로 펫 시장 데이터 조사·분석하고 서비스 기획서 작성</h2>
     <div class="flow">
       <div class="f e"><div class="fl">기획서 작성 예시</div><div class="fv">테마 1개로 본 <b>리서치 → 기획서</b> 압축 과정</div></div>
       <div class="f w"><div class="fl">직접 작업</div><div class="fv">팀 <b>데이터 분석 + 서비스 기획서</b>를 작성함</div></div>
@@ -651,7 +671,7 @@
 
   <!-- 05 -->
   <section id="pet-s5">
-    <h2><span class="num-badge">05</span>[실습] 바이브 코딩으로 앱 시제품 만들기</h2>
+    <h2><span class="num-badge">05</span>[실습] 바이브 코딩으로 펫 서비스 앱 시제품 만들어 보기</h2>
     <div class="flow">
       <div class="f e"><div class="fl">앱 시제품 제작 예시</div><div class="fv">시제품 기획서 한 장을 넣어 <b>첫 화면이 뜨기까지</b></div></div>
       <div class="f w"><div class="fl">직접 작업</div><div class="fv">생성 → 수정 반복 → 캡처·저장</div></div>
@@ -738,7 +758,7 @@
 
   <!-- 06 -->
   <section id="pet-s6">
-    <h2><span class="num-badge">06</span>[실습] AI 영상 도구로 홍보 영상 제작</h2>
+    <h2><span class="num-badge">06</span>[실습] AI 영상 도구로 짧은 홍보 영상 제작하기</h2>
     <div class="flow">
       <div class="f e"><div class="fl">홍보 영상 제작 예시</div><div class="fv">프롬프트 5요소로 <b>컷 1개를 만드는</b> 과정</div></div>
       <div class="f w"><div class="fl">직접 작업</div><div class="fv">스토리보드 → 생성 → 편집</div></div>
@@ -959,14 +979,14 @@
   </section>
 
   <div class="toc">
-    <div class="toc-label">단계별 상세 보기</div>
+    <div class="toc-label">수업 일정</div>
     <div class="toc-row">
-      <a href="#eco-s1"><span class="tn">01</span>지속가능성과 식품 시장의 변화</a>
-      <a href="#eco-s2"><span class="tn">02</span>분야별 창업 기회 탐색</a>
-      <a href="#eco-s3"><span class="tn">03</span>[실습] 식품·환경 데이터 분석</a>
-      <a href="#eco-s4"><span class="tn">04</span>[실습] 제품·서비스 기획안</a>
-      <a href="#eco-s5"><span class="tn">05</span>[실습] 홍보 포스터</a>
-      <a href="#eco-s6"><span class="tn">06</span>과제·코칭</a>
+      <a href="#eco-s1"><span class="tn">01</span><span class="tx">지속가능성과 식품 시장의 변화</span></a>
+      <a href="#eco-s2"><span class="tn">02</span><span class="tx">분야별 창업 기회 탐색</span></a>
+      <a href="#eco-s3"><span class="tn">03</span><span class="tx">[실습] 식품·환경 데이터 분석</span></a>
+      <a href="#eco-s4"><span class="tn">04</span><span class="tx">[실습] 제품·서비스 기획안</span></a>
+      <a href="#eco-s5"><span class="tn">05</span><span class="tx">[실습] 홍보 포스터</span></a>
+      <a href="#eco-s6"><span class="tn">06</span><span class="tx">과제·코칭</span></a>
     </div>
   </div>
 
@@ -1068,7 +1088,7 @@
 
   <!-- 03 -->
   <section id="eco-s3">
-    <h2><span class="num-badge">03</span>[실습] 식품·환경 공개 데이터 분석</h2>
+    <h2><span class="num-badge">03</span>[실습] 식품·환경 공개 데이터를 AI를 활용해 분석</h2>
     <div class="flow">
       <div class="f e"><div class="fl">데이터 분석 예시</div><div class="fv">프롬프트 실행부터 <b>환각·산정범위 오류를 잡아내기까지</b></div></div>
       <div class="f t"><div class="fl">함께 해보기</div><div class="fv">같은 프롬프트 실행 후 <b>출처 1건을 원문까지</b> 대조함</div></div>
@@ -1149,7 +1169,7 @@
 
   <!-- 04 -->
   <section id="eco-s4">
-    <h2><span class="num-badge">04</span>[실습] 제품·서비스 기획안 작성</h2>
+    <h2><span class="num-badge">04</span>[실습] 분석 결과를 바탕으로 제품·서비스 기획안 작성</h2>
     <div class="flow">
       <div class="f e"><div class="fl">기획안 작성 예시</div><div class="fv">막연한 문장이 <b>질문 3번으로 바뀌는</b> 과정</div></div>
       <div class="f w"><div class="fl">직접 작업</div><div class="fv">8블록 <b>제품·서비스 기획안</b>을 완성함</div></div>
@@ -1218,7 +1238,7 @@
 
   <!-- 05 -->
   <section id="eco-s5">
-    <h2><span class="num-badge">05</span>[실습] AI 이미지 생성 도구로 홍보 포스터 작성</h2>
+    <h2><span class="num-badge">05</span>[실습] AI 이미지 생성 도구를 활용해 홍보 포스터 작성</h2>
     <div class="flow">
       <div class="f e"><div class="fl">포스터 제작 예시</div><div class="fv">기획안의 한 문장이 <b>포스터 카피와 이미지</b>로 바뀌는 과정</div></div>
       <div class="f w"><div class="fl">직접 작업</div><div class="fv">카피 → 이미지 생성 → 편집·완성</div></div>
