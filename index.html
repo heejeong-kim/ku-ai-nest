@@ -152,6 +152,25 @@
   .phase.together th{background:var(--tg-bg);border-color:var(--tg-line)}
   .phase.work th{background:var(--wk-bg);border-color:var(--wk-line)}
 
+
+  /* 교육 개요 표 */
+  .info-tb{width:100%;border-collapse:collapse;font-size:17.5px;margin-top:4px}
+  .info-tb th{width:150px;background:var(--accent-bg);border:1px solid var(--accent-line);
+              padding:12px 15px;text-align:left;white-space:nowrap;font-weight:700;font-size:17px}
+  .info-tb td{border:1px solid var(--line);padding:12px 15px;color:var(--ink2);line-height:1.65}
+  .info-tb td strong{color:var(--ink)}
+  /* 단계 구분 태그 */
+  .kind{display:inline-block;font-size:14px;font-weight:700;padding:2px 11px;border-radius:7px;
+        margin-right:8px;vertical-align:2px;border:1px solid}
+  .kind.theory{background:#eef3fd;color:#2f5fd0;border-color:#c3d5f6}
+  .kind.plan  {background:#f7eefc;color:#8a3fb8;border-color:#e0c4ef}
+  .kind.build {background:#e8f4f1;color:#11705f;border-color:#b3ddd3}
+  .kind.review{background:#fdf0ec;color:#b4472c;border-color:#f0c8ba}
+  .tl-sub-block{margin:10px 0 0}
+  .tl-sub-block:first-of-type{margin-top:4px}
+  .tl-sub-block .sbt{font-size:17.5px;font-weight:700;color:var(--ink);line-height:1.5}
+  .tl-sub-block ul{margin:4px 0 0 20px}
+  .tl-sub-block li{margin:4px 0;font-size:17px;color:var(--ink2);line-height:1.6}
   .blocks{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin:20px 0 6px}
   .blk{border:1px solid var(--line);border-radius:13px;padding:16px 18px;background:#fcfdfe;text-align:center}
   .blk .bt{font-size:16px;font-weight:600;color:var(--ink3)}
@@ -283,7 +302,7 @@
       <div class="acc-body">
         <ul class="nlist">
           <li><b>기기</b> 노트북, 충전기, 이어폰</li>
-          <li><b>계정</b> 1회차에 온보딩한 <strong>유료 팀 계정</strong> — 로그인 상태 확인 (개인 계정 준비 불필요)</li>
+          <li><b>계정</b> 1회차에 온보딩한 <strong>Claude Team Standard</strong> 팀 계정 — 로그인 상태 확인 (개인 계정 준비 불필요)</li>
           <li><b>지참</b> 2회차 <strong>팀 사업계획서 초안(1p)</strong>과 팀 MVP</li>
           <li><b>온라인 참여</b> <span class="online">온라인</span> 줌 실명·화면 접속, 팀 채널 확인</li>
           <li><b>선택 과제</b> 반려동물 관련 <strong>내가 불편했던 경험 3가지</strong> 메모</li>
@@ -319,7 +338,19 @@
   </section>
 
   <section>
-    <h2>세부 일정</h2>
+    <h2>교육 개요</h2>
+    <div class="tw"><table class="info-tb">
+      <tr><th>교육 과정</th><td>펫 모듈 (4/6회차)</td></tr>
+      <tr><th>교육 기간</th><td>2026. 8. 30.(일) 13:00~17:00</td></tr>
+      <tr><th>교육 시간</th><td>회차당 4시간(13:00~17:00) · 필요 시 최대 5시간 탄력 운영</td></tr>
+      <tr><th>운영 방식</th><td>온·오프라인 병행(오프라인 50명 + 온라인 100명, 최대 150명)</td></tr>
+      <tr><th>협업 방식</th><td>1~4인 팀 구성(관심분야 매칭, 1회차 확정) · M2~M4 전 과정 팀 단위 공동 수행</td></tr>
+      <tr><th>AI 플랫폼</th><td><strong>Claude Team Standard</strong> / Nanobanana · GPT Image 2 / Veo · Flow / CapCut 등</td></tr>
+    </table></div>
+  </section>
+
+  <section>
+    <h2>세부 일정 <span style="font-size:16px;font-weight:600;color:var(--ink3)">M3-B. 펫 × AI</span></h2>
     <div class="blocks">
       <div class="blk"><div class="bt">산업 특강</div><div class="bv">1시간 20분</div><div class="bd">13:00~14:20</div></div>
       <div class="blk"><div class="bt">실습</div><div class="bv">2시간 20분</div><div class="bd">14:20~16:40</div></div>
@@ -329,10 +360,11 @@
       <div class="tl-row">
         <div class="tl-time">13:00~14:20<span>1시간 20분</span></div>
         <div class="tl-body"><span class="tl-tag">산업 특강</span>
-          <div class="tl-txt">
+          <div class="tl-sub-block">
+            <div class="sbt"><span class="kind theory">이론</span>펫 산업 이해와 기획 준비</div>
             <ul>
               <li>펫 산업의 핵심 비즈니스 이슈 분석</li>
-              <li>서비스 기획 전 데이터 수집 및 분석 — 챗GPT·클로드 리서치로 공신력 있는 시장 데이터·통계 분석</li>
+              <li>서비스 기획 전 데이터 수집 및 분석</li>
               <li>서비스 기획서의 구성 요소 이해</li>
             </ul>
           </div>
@@ -342,26 +374,47 @@
       <div class="tl-row">
         <div class="tl-time">14:20~16:40<span>2시간 20분</span></div>
         <div class="tl-body"><span class="tl-tag">실습</span>
-          <div class="tl-txt">
+          <div class="tl-sub-block">
+            <div class="sbt"><span class="kind plan">기획</span>AI 리서치로 펫 시장 데이터 조사·분석 → 서비스 기획서 작성</div>
             <ul>
-              <li>AI 리서치 도구를 활용해 펫 시장 데이터 조사·분석하고 서비스 기획서 작성</li>
-              <li>바이브 코딩으로 펫 서비스 앱 시제품 만들어 보기</li>
-              <li>AI 영상 도구로 짧은 홍보 영상(콘셉트 영상) 제작하기</li>
+              <li>테마 확정 + 연결 데이터셋 1개 지정<br>(예시 4종 : 스마트 급식 / 건강기록 관리 / 산책·펫시터 매칭 / 용품 추천)</li>
+              <li>「펫 시장 데이터 분석」 5개 구성 작성</li>
+              <li>2회차 사업계획서 초안(1p) → 8블록 기획서로 고도화</li>
             </ul>
           </div>
-          <div class="tl-out">담당 · <b>주강사·보조강사 순회 지도</b></div>
+          <div class="tl-sub-block">
+            <div class="sbt"><span class="kind build">개발</span>바이브 코딩으로 펫 서비스 앱 시제품 제작하기</div>
+            <ul>
+              <li>시제품 기획서 4항목(한 줄 정의 · 화면 3개 · 데이터 필드 · 톤앤매너) 작성</li>
+              <li>데이터 필드는 공개 데이터셋 실제 컬럼 그대로 사용<br>(APMS 기준 : 품종/성별/추정나이/발견장소/공고기간/상태/특이사항)</li>
+              <li>클로드 코드에 제작 프롬프트 입력 → 1차 생성 → 수정 반복(데이터→기능→색상 순) → 캡처·저장</li>
+            </ul>
+          </div>
+          <div class="tl-sub-block">
+            <div class="sbt"><span class="kind build">개발</span>AI 영상 도구로 홍보 영상 제작하기</div>
+            <ul>
+              <li>프롬프트 5요소 (피사체 + 행동 + 배경 + 카메라 무빙 + 분위기)</li>
+              <li>스토리보드 3컷 (문제 8초 / 해결 14초 / 브랜드 8초)</li>
+            </ul>
+          </div>
+          <div class="tl-out">담당 · <b>주강사 · 보조강사</b></div>
         </div>
       </div>
       <div class="tl-row">
         <div class="tl-time">16:40~17:00<span>20분</span></div>
         <div class="tl-body"><span class="tl-tag">과제·코칭</span>
-          <div class="tl-txt">
+          <div class="tl-sub-block">
+            <div class="sbt"><span class="kind review">회고</span>펫 분야 과제 정리·제출</div>
             <ul>
-              <li>'펫 분야 과제(기획서 + 앱 + 홍보영상)' 정리해 제출</li>
+              <li>「펫 시장 데이터 분석」 2~3p</li>
+              <li>펫 서비스 시제품 기획서 1~2p</li>
+              <li>앱 시제품(실행 링크 또는 캡처 3장)</li>
+              <li>홍보 영상(20~40초, 서비스명 노출)</li>
+              <li>파일명 <code>[펫] 팀명_결과물 종류</code></li>
               <li>6회차 완성 워크숍으로 이어가기</li>
             </ul>
           </div>
-          <div class="tl-out">담당 · <b>주강사·보조강사</b></div>
+          <div class="tl-out">담당 · <b>주강사 · 보조강사</b></div>
         </div>
       </div>
     </div>
@@ -372,6 +425,13 @@
         <li>분야별 공개 데이터셋은 <strong>사전 가공·배포</strong>되어 실습에서 즉시 활용 가능함</li>
       </ul>
     </div>
+    <div class="tw"><table class="info-tb" style="margin-top:16px">
+      <tr><th>산출물</th><td>
+        · 「펫 시장 데이터 분석」 팀 중간 산출물<br>
+        · 펫 서비스 시제품 기획서 + 바이브 코딩 앱 시제품 + 홍보 영상 <strong>(사업계획서 반영)</strong>
+      </td></tr>
+      <tr><th>활용 데이터셋</th><td>동물복지에 대한 국민의식조사, 전국동물보호센터정보표준데이터, 국가동물보호정보시스템 등</td></tr>
+    </table></div>
   </section>
 
   <div class="toc">
@@ -777,9 +837,9 @@
       <h3>사용 도구</h3>
       <div class="tw"><table>
         <tr><th style="width:20%">구분</th><th style="width:40%">도구</th><th>쓰는 곳</th></tr>
-        <tr><td><strong>이미지</strong></td><td>Google Nanobanana, GPT Image 2 등</td><td>컷별 장면 이미지, 슬라이드형 영상 소스</td></tr>
-        <tr><td><strong>영상 제작</strong></td><td>Gemini Veo, Flow 등</td><td>움직이는 컷 생성</td></tr>
-        <tr><td><strong>편집</strong></td><td>Vrew, CapCut 등 무료 도구</td><td>컷 이어붙이기 · 자막 · 배경음악</td></tr>
+        <tr><td><strong>이미지</strong></td><td>Nanobanana · GPT Image 2 등</td><td>컷별 장면 이미지, 슬라이드형 영상 소스</td></tr>
+        <tr><td><strong>영상 제작</strong></td><td>Veo · Flow 등</td><td>움직이는 컷 생성</td></tr>
+        <tr><td><strong>편집</strong></td><td>CapCut 등</td><td>컷 이어붙이기 · 자막 · 배경음악</td></tr>
       </table></div>
     </div>
 
@@ -801,7 +861,7 @@
 
       <h4>STEP 3. 편집·마무리</h4>
       <ul class="dot">
-        <li>Vrew 또는 CapCut에서 3컷 이어붙이기 + 자막 + 배경음악</li>
+        <li>CapCut에서 3컷 이어붙이기 + 자막 + 배경음악</li>
         <li>마지막 3초에 <strong>서비스명 + 한 줄 슬로건</strong>을 반드시 넣음</li>
       </ul>
       <div class="callout warn"><span class="t">시간이 부족하면 · 저작권 주의</span>
@@ -888,7 +948,7 @@
       <div class="acc-body">
         <ul class="nlist">
           <li><b>기기</b> 노트북, 충전기, 이어폰</li>
-          <li><b>계정</b> 1회차에 온보딩한 <strong>유료 팀 계정</strong> — 로그인 상태 확인 (개인 계정 준비 불필요)</li>
+          <li><b>계정</b> 1회차에 온보딩한 <strong>Claude Team Standard</strong> 팀 계정 — 로그인 상태 확인 (개인 계정 준비 불필요)</li>
           <li><b>지참</b> 2회차 <strong>팀 사업계획서 초안(1p)</strong>과 팀 MVP</li>
           <li><b>온라인 참여</b> <span class="online">온라인</span> 줌 실명·화면 접속, 팀 채널 확인</li>
           <li><b>선택 과제</b> 식품·환경 관련 <strong>내가 불편했던 경험 3가지</strong> 메모</li>
@@ -924,7 +984,19 @@
   </section>
 
   <section>
-    <h2>세부 일정</h2>
+    <h2>교육 개요</h2>
+    <div class="tw"><table class="info-tb">
+      <tr><th>교육 과정</th><td>에코·푸드 모듈 (5/6회차)</td></tr>
+      <tr><th>교육 기간</th><td>2026. 9. 5.(토) 13:00~17:00</td></tr>
+      <tr><th>교육 시간</th><td>회차당 4시간(13:00~17:00) · 필요 시 최대 5시간 탄력 운영</td></tr>
+      <tr><th>운영 방식</th><td>온·오프라인 병행(오프라인 50명 + 온라인 100명, 최대 150명)</td></tr>
+      <tr><th>협업 방식</th><td>1~4인 팀 구성(관심분야 매칭, 1회차 확정) · M2~M4 전 과정 팀 단위 공동 수행</td></tr>
+      <tr><th>AI 플랫폼</th><td><strong>Claude Team Standard</strong> / Nanobanana · GPT Image 2 / Canva 등</td></tr>
+    </table></div>
+  </section>
+
+  <section>
+    <h2>세부 일정 <span style="font-size:16px;font-weight:600;color:var(--ink3)">M3-C. 에코·푸드 × AI</span></h2>
     <div class="blocks">
       <div class="blk"><div class="bt">산업 특강</div><div class="bv">1시간 10분</div><div class="bd">13:00~14:10</div></div>
       <div class="blk"><div class="bt">실습</div><div class="bv">2시간 30분</div><div class="bd">14:10~16:40</div></div>
@@ -934,9 +1006,10 @@
       <div class="tl-row">
         <div class="tl-time">13:00~14:10<span>1시간 10분</span></div>
         <div class="tl-body"><span class="tl-tag">산업 특강</span>
-          <div class="tl-txt">
+          <div class="tl-sub-block">
+            <div class="sbt"><span class="kind theory">이론</span>지속가능성과 식품 시장의 변화</div>
             <ul>
-              <li>지속가능성과 식품 시장의 변화 (푸드테크 · 친환경 소비 · 탄소중립)</li>
+              <li>푸드테크 · 친환경 소비 · 탄소중립</li>
               <li>분야별 창업 기회 탐색</li>
             </ul>
           </div>
@@ -946,26 +1019,39 @@
       <div class="tl-row">
         <div class="tl-time">14:10~16:40<span>2시간 30분</span></div>
         <div class="tl-body"><span class="tl-tag">실습</span>
-          <div class="tl-txt">
+          <div class="tl-sub-block">
+            <div class="sbt"><span class="kind plan">기획</span>식품·환경 공개 데이터를 AI로 분석 → 제품·서비스 기획안 작성</div>
             <ul>
-              <li>식품·환경 공개 데이터를 AI를 활용해 분석</li>
-              <li>분석 결과를 바탕으로 제품·서비스 기획안 작성</li>
-              <li>AI 이미지 생성 도구를 활용해 홍보 포스터 작성</li>
+              <li>테마 확정 + 연결 데이터 1종 지정<br>(예시 4종 : 음식물 절감·잔반 관리 / 친환경 소비 가이드·탄소 라벨 / 로컬푸드 커머스·산지 직거래 / 지속가능 식단)</li>
+              <li>「에코·푸드 분야 데이터 분석」 6개 구성 작성 (환경 수치는 기준연도·산정범위 명시)</li>
+              <li>2회차 사업계획서 초안(1p) → 8블록 기획안으로 고도화 (환경 임팩트 지표 1개 포함)</li>
             </ul>
           </div>
-          <div class="tl-out">담당 · <b>주강사·보조강사 순회 지도</b></div>
+          <div class="tl-sub-block">
+            <div class="sbt"><span class="kind build">개발</span>AI 이미지 생성 도구로 홍보 포스터 제작하기</div>
+            <ul>
+              <li>포스터 4요소(헤드 카피 · 서브 카피 · 핵심 이미지 · 임팩트 수치) 작성</li>
+              <li>이미지 프롬프트 5요소 (피사체 + 행동 + 배경 + 구도 + 분위기) — 카피 여백 확보 필수</li>
+              <li>Nanobanana · GPT Image 2로 생성 → Canva에서 카피 배치 → 세로형 1장 완성</li>
+            </ul>
+          </div>
+          <div class="tl-out">담당 · <b>주강사 · 보조강사</b></div>
         </div>
       </div>
       <div class="tl-row">
         <div class="tl-time">16:40~17:00<span>20분</span></div>
         <div class="tl-body"><span class="tl-tag">과제·코칭</span>
-          <div class="tl-txt">
+          <div class="tl-sub-block">
+            <div class="sbt"><span class="kind review">회고</span>에코·푸드 분야 과제 정리·제출</div>
             <ul>
-              <li>'에코·푸드 분야 과제(기획안 + 포스터)' 정리해 제출</li>
+              <li>「에코·푸드 분야 데이터 분석」 2~3p</li>
+              <li>제품·서비스 기획안 1~2p</li>
+              <li>홍보 포스터(세로형 이미지 1장, 서비스명 노출)</li>
+              <li>파일명 <code>[에코푸드] 팀명_결과물 종류</code></li>
               <li>6회차 완성 워크숍으로 이어가기</li>
             </ul>
           </div>
-          <div class="tl-out">담당 · <b>주강사·보조강사</b></div>
+          <div class="tl-out">담당 · <b>주강사 · 보조강사</b></div>
         </div>
       </div>
     </div>
@@ -976,6 +1062,13 @@
         <li>식품·환경 공개 데이터는 <strong>사전 가공·배포</strong>되어 실습에서 즉시 활용 가능함</li>
       </ul>
     </div>
+    <div class="tw"><table class="info-tb" style="margin-top:16px">
+      <tr><th>산출물</th><td>
+        · 「에코·푸드 분야 데이터 분석」 팀 중간 산출물<br>
+        · 제품·서비스 기획안 + 홍보 포스터 <strong>(사업계획서 반영)</strong>
+      </td></tr>
+      <tr><th>활용 데이터</th><td>식품·환경 공개 데이터 (사전 가공·배포)</td></tr>
+    </table></div>
   </section>
 
   <div class="toc">
@@ -1268,8 +1361,8 @@
       <h3>사용 도구</h3>
       <div class="tw"><table>
         <tr><th style="width:22%">구분</th><th style="width:40%">도구</th><th>쓰는 곳</th></tr>
-        <tr><td><strong>이미지 생성</strong></td><td>Google Nanobanana, GPT Image 2 등</td><td>포스터 핵심 이미지 생성</td></tr>
-        <tr><td><strong>편집·레이아웃</strong></td><td>Canva, Vrew 등 무료 도구</td><td>카피 배치 · 색 보정 · 서비스명 삽입</td></tr>
+        <tr><td><strong>이미지 생성</strong></td><td>Nanobanana · GPT Image 2 등</td><td>포스터 핵심 이미지 생성</td></tr>
+        <tr><td><strong>편집·레이아웃</strong></td><td>Canva 등</td><td>카피 배치 · 색 보정 · 서비스명 삽입</td></tr>
       </table></div>
     </div>
 
