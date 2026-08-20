@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>펫 산업 특강 · AI Nest</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --yellow:#f5c400;
+  --yellow-deep:#b58c00;
+  --yellow-soft:#fff6c5;
+  --paper:#fffdf6;
+  --ink:#171717;
+  --muted:#77736a;
+  --line:#e8e1c9;
+  --DW:1280px;
+  --DH:720px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%}
+body{overflow:hidden;background:#f5f2e8;color:var(--ink);font-family:'IBM Plex Sans KR',sans-serif;-webkit-font-smoothing:antialiased}
+.stage{position:fixed;inset:0;overflow:hidden;background:radial-gradient(circle at 82% 18%,rgba(245,196,0,.22),transparent 28%),linear-gradient(135deg,#fff 0%,#fff8d7 100%)}
+.stage::before{content:"";position:absolute;inset:-20%;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.62) 45%,transparent 60%);animation:sweep 9s ease-in-out infinite;pointer-events:none}
+.deck{position:absolute;left:50%;top:50%;width:var(--DW);height:var(--DH);transform-origin:center center}
+.slide{position:absolute;inset:0;padding:68px 84px 56px;display:flex;flex-direction:column;justify-content:center;opacity:0;transform:translateX(48px) scale(.992);transition:opacity .45s ease,transform .55s cubic-bezier(.22,.61,.36,1);pointer-events:none}
+.slide.is-active{opacity:1;transform:none;pointer-events:auto}
+.kicker{font-size:18px;font-weight:700;letter-spacing:.14em;color:var(--yellow-deep);margin-bottom:18px}
+h1{max-width:1000px;font-size:64px;line-height:1.14;letter-spacing:-.045em;word-break:keep-all}
+h1 span{display:inline;background:linear-gradient(transparent 66%,rgba(245,196,0,.55) 66%)}
+.lead{max-width:880px;margin-top:26px;font-size:24px;line-height:1.55;color:#4a4740;word-break:keep-all}
+.placeholder{display:inline-flex;align-items:center;gap:10px;margin-top:34px;padding:12px 18px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.72);font-size:16px;font-weight:600;color:var(--muted);width:max-content}
+.placeholder::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--yellow);box-shadow:0 0 0 6px rgba(245,196,0,.14)}
+.brand{position:absolute;left:84px;bottom:46px;font-size:14px;font-weight:700;letter-spacing:.08em;color:#8a8162}
+.controls{position:fixed;right:24px;bottom:22px;z-index:5;display:flex;align-items:center;gap:8px}
+.controls button{width:46px;height:46px;border:1px solid rgba(23,23,23,.12);border-radius:14px;background:rgba(255,255,255,.86);font:inherit;font-size:22px;cursor:pointer;box-shadow:0 8px 24px rgba(54,45,4,.08)}
+.controls button:disabled{opacity:.28;cursor:default}
+.counter{min-width:64px;text-align:center;font-size:13px;font-weight:700;color:#6e6859}
+.progress{position:fixed;left:0;bottom:0;height:4px;background:var(--yellow);width:0;transition:width .35s ease;z-index:6}
+.back{position:fixed;left:20px;top:18px;z-index:5;display:inline-flex;align-items:center;gap:7px;padding:9px 13px;border-radius:11px;background:rgba(255,255,255,.78);border:1px solid rgba(23,23,23,.09);color:#3d392f;text-decoration:none;font-size:13px;font-weight:700;backdrop-filter:blur(8px)}
+@keyframes sweep{0%,18%{transform:translateX(-55%);opacity:0}38%{opacity:.8}62%,100%{transform:translateX(55%);opacity:0}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<a class="back" href="index.html#special">← 특강 본문으로</a>
+<div class="stage">
+  <main class="deck" id="deck" aria-live="polite">
+    <section class="slide is-active">
+      <p class="kicker">2026 KU CAMPUSTOWN · AI NEST</p>
+      <h1><span>펫 산업 특강</span><br>시장을 문제와 기회 관점으로 보기</h1>
+      <p class="lead">슬라이드 발표자료 전용 페이지입니다. 세부 슬라이드 내용은 이후 이 페이지에서 이어서 구성합니다.</p>
+      <div class="placeholder">슬라이드 콘텐츠 작업 예정</div>
+      <p class="brand">M3 산업 특화 × AI · 펫 분야 특화교육</p>
+    </section>
+  </main>
+</div>
+<div class="controls" aria-label="슬라이드 이동">
+  <button type="button" id="prev" aria-label="이전 슬라이드">←</button>
+  <span class="counter" id="counter">1 / 1</span>
+  <button type="button" id="next" aria-label="다음 슬라이드">→</button>
+</div>
+<div class="progress" id="progress"></div>
+<script>
+const deck=document.getElementById('deck');
+const slides=[...document.querySelectorAll('.slide')];
+const prev=document.getElementById('prev');
+const next=document.getElementById('next');
+const counter=document.getElementById('counter');
+const progress=document.getElementById('progress');
+let current=0;
+function scaleDeck(){
+  const sw=1280,sh=720;
+  const scale=Math.min(innerWidth/sw,innerHeight/sh);
+  deck.style.transform=`translate(-50%,-50%) scale(${scale})`;
+}
+function render(){
+  slides.forEach((s,i)=>s.classList.toggle('is-active',i===current));
+  counter.textContent=`${current+1} / ${slides.length}`;
+  progress.style.width=`${((current+1)/slides.length)*100}%`;
+  prev.disabled=current===0;
+  next.disabled=current===slides.length-1;
+}
+function go(delta){current=Math.max(0,Math.min(slides.length-1,current+delta));render()}
+prev.addEventListener('click',()=>go(-1));
+next.addEventListener('click',()=>go(1));
+addEventListener('keydown',e=>{
+  if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();go(1)}
+  if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();go(-1)}
+});
+addEventListener('resize',scaleDeck);
+scaleDeck();render();
+</script>
+</body>
+</html>
