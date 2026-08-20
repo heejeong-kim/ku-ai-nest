@@ -1,0 +1,45 @@
+name: Hero continuous motion
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/hero-continuous-motion.yml'
+permissions:
+  contents: write
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Add continuous hero motion
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('index.html')
+          s=p.read_text()
+          old=".hero{min-height:86vh;display:flex;align-items:center;position:relative;overflow:hidden;background:radial-gradient(circle at 78% 28%,rgba(245,196,0,.22),transparent 24%),linear-gradient(135deg,#fff 0%,#fff9da 62%,#f6cc1a 160%);border-bottom:1px solid var(--line)}"
+          new=".hero{min-height:86vh;display:flex;align-items:center;position:relative;overflow:hidden;background:radial-gradient(circle at 78% 28%,rgba(245,196,0,.22),transparent 24%),radial-gradient(circle at 18% 74%,rgba(49,90,216,.07),transparent 28%),linear-gradient(135deg,#fff 0%,#fff9da 62%,#f6cc1a 160%);background-size:120% 120%,135% 135%,140% 140%;background-position:78% 28%,18% 74%,0% 50%;animation:heroBgShift 16s ease-in-out infinite alternate;border-bottom:1px solid var(--line)}"
+          if old not in s: raise SystemExit('hero background css not found')
+          s=s.replace(old,new,1)
+          marker=".hero-inner{position:relative;z-index:2;padding:120px 0 100px}"
+          repl=".hero-inner{position:relative;z-index:2;padding:120px 0 100px}.hero-copy{animation:heroCopyDrift 8s ease-in-out 1.5s infinite}"
+          if marker not in s: raise SystemExit('hero-inner css not found')
+          s=s.replace(marker,repl,1)
+          key="@keyframes heroFloat{0%,100%{transform:translate3d(0,0,0)}50%{transform:translate3d(0,-18px,0)}}"
+          add="@keyframes heroBgShift{0%{background-position:78% 28%,18% 74%,0% 50%}50%{background-position:72% 34%,24% 68%,52% 46%}100%{background-position:84% 22%,12% 80%,100% 54%}}@keyframes heroCopyDrift{0%,100%{transform:translate3d(0,0,0)}50%{transform:translate3d(0,-5px,0)}}"+key
+          if key not in s: raise SystemExit('heroFloat keyframe not found')
+          s=s.replace(key,add,1)
+          old_reduce="@media(prefers-reduced-motion:reduce){.hero:before,.hero:after,.pet-card,.hero-copy>*{animation:none!important}.hero-copy>*{opacity:1;transform:none}.hero-visual,.pet-card{transition:none!important}.float-nav a{transition:none}}"
+          new_reduce="@media(prefers-reduced-motion:reduce){.hero,.hero:before,.hero:after,.pet-card,.hero-copy,.hero-copy>*{animation:none!important}.hero-copy>*{opacity:1;transform:none}.hero-visual,.pet-card{transition:none!important}.float-nav a{transition:none}}"
+          if old_reduce not in s: raise SystemExit('reduced motion css not found')
+          s=s.replace(old_reduce,new_reduce,1)
+          p.write_text(s)
+          PY
+      - name: Commit changes
+        run: |
+          if git diff --quiet; then exit 0; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git commit -m 'Add continuous hero text and background motion'
+          git push
