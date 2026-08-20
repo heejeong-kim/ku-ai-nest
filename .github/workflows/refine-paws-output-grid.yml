@@ -1,0 +1,45 @@
+name: Refine paws and output grid
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/refine-paws-output-grid.yml'
+permissions:
+  contents: write
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Refine paw motion and output alignment
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('index.html')
+          s=p.read_text()
+
+          old=""".hero-paws{position:absolute;inset:-18%;z-index:0;pointer-events:none;opacity:.1;background-image:url(\"data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27120%27 height=%27120%27 viewBox=%270 0 120 120%27%3E%3Cg fill=%27%23856900%27%3E%3Cellipse cx=%2760%27 cy=%2768%27 rx=%2718%27 ry=%2716%27/%3E%3Cellipse cx=%2738%27 cy=%2748%27 rx=%278%27 ry=%2711%27 transform=%27rotate(-20 38 48)%27/%3E%3Cellipse cx=%2753%27 cy=%2737%27 rx=%278%27 ry=%2711%27 transform=%27rotate(-8 53 37)%27/%3E%3Cellipse cx=%2769%27 cy=%2737%27 rx=%278%27 ry=%2711%27 transform=%27rotate(8 69 37)%27/%3E%3Cellipse cx=%2784%27 cy=%2749%27 rx=%278%27 ry=%2711%27 transform=%27rotate(20 84 49)%27/%3E%3C/g%3E%3C/svg%3E\");background-size:138px 138px;transform:rotate(-8deg) scale(1.08);animation:pawFieldDrift 22s linear infinite}"""
+          new=""".hero-paws{position:absolute;inset:-12%;z-index:0;pointer-events:none;opacity:.03;background-image:url(\"data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27120%27 height=%27120%27 viewBox=%270 0 120 120%27%3E%3Cg fill=%27%23cfc7ad%27%3E%3Cellipse cx=%2760%27 cy=%2768%27 rx=%2718%27 ry=%2716%27/%3E%3Cellipse cx=%2738%27 cy=%2748%27 rx=%278%27 ry=%2711%27 transform=%27rotate(-20 38 48)%27/%3E%3Cellipse cx=%2753%27 cy=%2737%27 rx=%278%27 ry=%2711%27 transform=%27rotate(-8 53 37)%27/%3E%3Cellipse cx=%2769%27 cy=%2737%27 rx=%278%27 ry=%2711%27 transform=%27rotate(8 69 37)%27/%3E%3Cellipse cx=%2784%27 cy=%2749%27 rx=%278%27 ry=%2711%27 transform=%27rotate(20 84 49)%27/%3E%3C/g%3E%3C/svg%3E\");background-size:96px 96px;transform:rotate(-2.5deg) scale(1.01);animation:pawFieldDrift 38s ease-in-out infinite alternate}"""
+          if old not in s: raise SystemExit('paw css not found')
+          s=s.replace(old,new,1)
+
+          old_key="""@keyframes pawFieldDrift{0%{background-position:0 0;transform:rotate(-8deg) scale(1.08) translate3d(0,0,0)}50%{background-position:92px 138px;transform:rotate(-6deg) scale(1.11) translate3d(12px,-8px,0)}100%{background-position:184px 276px;transform:rotate(-8deg) scale(1.08) translate3d(0,0,0)}}"""
+          new_key="""@keyframes pawFieldDrift{0%{background-position:0 0;transform:rotate(-2.5deg) scale(1.01) translate3d(0,0,0)}50%{background-position:7px 6px;transform:rotate(-2deg) scale(1.012) translate3d(2px,-1px,0)}100%{background-position:14px 12px;transform:rotate(-2.5deg) scale(1.01) translate3d(0,0,0)}}"""
+          if old_key not in s: raise SystemExit('paw keyframe not found')
+          s=s.replace(old_key,new_key,1)
+
+          old_card=""".output-card{min-height:128px;padding:20px;border:1px solid var(--line);border-radius:16px;background:#fff;display:flex;flex-direction:column;justify-content:space-between;gap:16px}.output-card .output-label{font-size:14px;font-weight:700;color:#806500}.output-card strong{font-size:18px;line-height:1.55;color:var(--ink);font-weight:600}"""
+          new_card=""".output-card{min-height:128px;padding:20px;border:1px solid var(--line);border-radius:16px;background:#fff;display:grid;grid-template-rows:28px auto;align-content:start;gap:22px}.output-card .output-label{display:flex;align-items:flex-start;font-size:14px;font-weight:700;line-height:1.4;color:#806500}.output-card strong{display:block;font-size:18px;line-height:1.55;color:var(--ink);font-weight:600}"""
+          if old_card not in s: raise SystemExit('output card css not found')
+          s=s.replace(old_card,new_card,1)
+
+          p.write_text(s)
+          PY
+      - name: Commit changes
+        run: |
+          if git diff --quiet; then exit 0; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git commit -m 'Soften paw motion and align output card text'
+          git push
