@@ -1,0 +1,43 @@
+name: Simplify curriculum tasks
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/simplify-curriculum-tasks.yml'
+permissions:
+  contents: write
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Simplify task bullets
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('index.html')
+          s=p.read_text()
+          pairs={
+          '<ul class="task-list"><li>2회차 산출물 점검</li><li>팀별 역할 분담</li><li>진행 방식 확인</li></ul>':'<ul class="task-list"><li>산출물 점검·팀 역할·진행 방식 확인</li></ul>',
+          '<ul class="task-list"><li>펫 산업 핵심 동향 확인</li><li>기회영역·실패유형·진입조건 확인</li><li>시장조사에 사용할 데이터 출처 확인</li></ul>':'<ul class="task-list"><li>핵심 산업 동향·기회영역 확인</li><li>진입조건·데이터 출처 확인</li></ul>',
+          '<ul class="task-list"><li>아이디어·시장 구조화</li><li>시장·트렌드·기회영역 조사</li><li>직접·간접 경쟁과 비소비 대안 비교</li><li>다음 단계 페인포인트 후보 도출</li></ul>':'<ul class="task-list"><li>아이디어·시장·트렌드 구조화</li><li>경쟁 비교 후 페인포인트 후보 도출</li></ul>',
+          '<ul class="task-list"><li>1단계에서 도출한 페인포인트 후보를 공식통계·공공데이터로 검증</li><li>문제의 존재·규모·빈도 확인</li><li>대상 고객과 비용·시간·불안 등 손실 근거 정리</li></ul>':'<ul class="task-list"><li>페인포인트 후보를 공식데이터로 검증</li><li>문제 규모·대상 고객·손실 근거 정리</li></ul>',
+          '<ul class="task-list"><li>검증된 핵심 페인포인트 1개 확정</li><li>최종 사업 아이템 1개 확정</li><li>핵심 고객·사용 상황·해결방식 정리</li><li>한 문장의 가치제안 확정</li></ul>':'<ul class="task-list"><li>핵심 페인포인트·최종 아이템 확정</li><li>고객·해결방식·가치제안 정리</li></ul>',
+          '<ul class="task-list"><li>브레이크 10분</li><li>1~3단계 결과를 유지해 사업계획서 핵심 초안 작성</li><li>문제 → 근거 → 솔루션 → 타겟 → 비즈니스모델 흐름 연결</li></ul>':'<ul class="task-list"><li>브레이크 10분</li><li>1~3단계 결과를 사업계획서 핵심 흐름으로 연결</li></ul>',
+          '<ul class="task-list"><li>MVP 검증 가설·핵심 기능 3개·유저 플로우·AI 역할 정의</li><li>AI 포함 PRD 작성</li><li>Claude Code로 실제 작동하는 웹 MVP 구현</li><li>필요 시 Google Sheets·Apps Script 연동</li></ul>':'<ul class="task-list"><li>MVP 범위·유저 플로우·AI 역할 및 PRD 정리</li><li>웹 MVP 구현, 필요 시 Google Sheets 연동</li></ul>',
+          '<ul class="task-list"><li>사업계획서·AI 웹 MVP·핵심 근거와 검증 결과를 제출 패키지로 정리</li><li>타겟 고객·핵심 문제·가치제안·MVP 가설의 일치 여부 확인</li><li>MVP 링크와 데이터 저장 기능의 실제 작동 여부 확인</li></ul>':'<ul class="task-list"><li>사업계획서·MVP·검증 결과 제출 패키지 정리</li><li>핵심 내용 일치 및 링크 작동 최종 확인</li></ul>',
+          '<ul class="task-list"><li>제출 여부 확인</li><li>후속 안내</li></ul>':'<ul class="task-list"><li>제출 확인·후속 안내</li></ul>'}
+          for old,new in pairs.items():
+              if old not in s:
+                  raise SystemExit('missing block: '+old[:80])
+              s=s.replace(old,new,1)
+          p.write_text(s)
+          PY
+      - name: Commit changes
+        run: |
+          if git diff --quiet; then exit 0; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git commit -m 'Simplify curriculum task bullets'
+          git push
