@@ -1,0 +1,49 @@
+name: Add special lecture deck CTA
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/add-special-lecture-cta.yml'
+permissions:
+  contents: write
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Add CTA beside special lecture heading
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          p=Path('index.html')
+          s=p.read_text()
+
+          pattern=r'(<section class="section" id="special"><div class="shell"><div class="section-head"><div><p class="kicker">SPECIAL LECTURE</p><h2>.*?</h2></div>)(</div>)'
+          repl=r'\1<a class="special-deck-cta" href="special-lecture.html" target="_blank" rel="noopener">슬라이드 발표자료 <span aria-hidden="true">↗</span></a>\2'
+          s2,n=re.subn(pattern,repl,s,count=1,flags=re.S)
+          if n!=1:
+              raise SystemExit(f'special heading replacement count={n}')
+
+          marker='.section-desc{max-width:760px;color:var(--muted);margin:0}'
+          css=marker+'.special-deck-cta{display:inline-flex;align-items:center;gap:8px;flex:0 0 auto;padding:11px 15px;border-radius:12px;background:#171717;color:#fff;text-decoration:none;font-size:15px;font-weight:700;box-shadow:0 10px 24px rgba(0,0,0,.10);transition:transform .22s ease,box-shadow .22s ease,background .22s ease}.special-deck-cta:hover{transform:translateY(-3px);box-shadow:0 14px 28px rgba(0,0,0,.16);background:#2a2a2a}.special-deck-cta span{color:var(--yellow);font-size:17px}'
+          if '.special-deck-cta{' not in s2:
+              if marker not in s2:
+                  raise SystemExit('section-desc css marker not found')
+              s2=s2.replace(marker,css,1)
+
+          mobile='@media(max-width:760px){body{font-size:18px}'
+          mobile_repl='@media(max-width:760px){body{font-size:18px}.section-head{align-items:flex-start}.special-deck-cta{padding:10px 12px;font-size:14px}'
+          if mobile in s2 and '.special-deck-cta{padding:10px 12px' not in s2:
+              s2=s2.replace(mobile,mobile_repl,1)
+
+          p.write_text(s2)
+          PY
+      - name: Commit changes
+        run: |
+          if git diff --quiet; then exit 0; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git commit -m 'Add special lecture slide deck CTA'
+          git push
