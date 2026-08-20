@@ -16,10 +16,8 @@ jobs:
           python - <<'PY'
           from pathlib import Path
           import re
-
           p = Path('special-lecture.html')
           s = p.read_text(encoding='utf-8')
-
           css_marker = '@keyframes shimmer'
           css = r'''
 /* requested slide refinements */
@@ -33,68 +31,31 @@ jobs:
               if css_marker not in s:
                   raise SystemExit('CSS marker not found')
               s = s.replace(css_marker, css + '\n' + css_marker, 1)
-
-          # Slide 7: add three examples to each risk card
-          examples = {
-              '성장률 착시': ['펫 커머스', '건강 앱', '동반 여행'],
-              '기능 추가형 차별화': ['예약 기능', '리뷰 기능', '추천 기능'],
-              'AI 목적화': ['AI 상담', 'AI 추천', 'AI 진단'],
-              '초기 고객 범위 과다': ['모든 반려인', '전 연령 반려견', '전국 보호자'],
-              '규제·전문가 판단 누락': ['진료 판단', '보험 비교', '영양 처방'],
-              '검증 인프라 과다': ['하드웨어', '재고 상품', '병원 제휴'],
-              '고객 행동 변화 과다': ['매일 기록', '새 기기 착용', '복잡한 입력'],
-          }
+          examples = {'성장률 착시':['펫 커머스','건강 앱','동반 여행'],'기능 추가형 차별화':['예약 기능','리뷰 기능','추천 기능'],'AI 목적화':['AI 상담','AI 추천','AI 진단'],'초기 고객 범위 과다':['모든 반려인','전 연령 반려견','전국 보호자'],'규제·전문가 판단 누락':['진료 판단','보험 비교','영양 처방'],'검증 인프라 과다':['하드웨어','재고 상품','병원 제휴'],'고객 행동 변화 과다':['매일 기록','새 기기 착용','복잡한 입력']}
           for title, vals in examples.items():
               pat = rf'(<article class="risk-card[^>]*>.*?<h3>{re.escape(title)}</h3><p>.*?</p>)(</article>)'
               def add_ex(m, vals=vals):
-                  if 'risk-examples' in m.group(1):
-                      return m.group(0)
-                  chips = ''.join(f'<span>{v}</span>' for v in vals)
-                  return m.group(1) + f'<div class="risk-examples">{chips}</div>' + m.group(2)
+                  if 'risk-examples' in m.group(1): return m.group(0)
+                  return m.group(1)+ '<div class="risk-examples">' + ''.join(f'<span>{v}</span>' for v in vals) + '</div>' + m.group(2)
               s, n = re.subn(pat, add_ex, s, count=1, flags=re.S)
-              if n != 1:
-                  raise SystemExit(f'Risk card not found: {title}')
-
-          # Slide 9: add insight if missing
-          source_section_pat = r'(<section class="slide" data-part="5\. 조사 출처".*?</div>)(</section>)'
+              if n != 1: raise SystemExit(f'Risk card not found: {title}')
+          source_pat = r'(<section class="slide" data-part="5\. 조사 출처".*?</div>)(</section>)'
           source_insight = '<div class="insight" data-anim style="--i:5">시장조사는 빠르게 많이 찾는 것보다 <span class="y">원출처에서 기준값을 먼저 확보</span>하고, 최신 변화는 보조자료로 검증해야 합니다</div>'
-          m = re.search(source_section_pat, s, flags=re.S)
-          if not m:
-              raise SystemExit('source section not found')
-          section = m.group(0)
-          if '시장조사는 빠르게 많이 찾는 것보다' not in section:
+          m = re.search(source_pat, s, flags=re.S)
+          if not m: raise SystemExit('source section not found')
+          if '시장조사는 빠르게 많이 찾는 것보다' not in m.group(0):
               s = s[:m.start()] + m.group(1) + source_insight + m.group(2) + s[m.end():]
-
-          # Slide 16: highlight important current status keywords
-          replacements = {
-              '적자 지속': '<span class="risk">적자 지속</span>',
-              '영업손실 163억원': '<span class="risk">영업손실 163억원</span>',
-              '지분 전량 매각': '<span class="risk">지분 전량 매각</span>',
-              '신규 출점 재개': '<span class="hot">신규 출점 재개</span>',
-              '매출 163억원': '<span class="hot">매출 163억원</span>',
-              '흡수합병': '<span class="bluekey">흡수합병</span>',
-              '업무협약': '<span class="bluekey">업무협약</span>',
-              'A-벤처스 선정': '<span class="hot">A-벤처스 선정</span>',
-              'API·SaaS': '<span class="bluekey">API·SaaS</span>',
-          }
-          for a,b in replacements.items():
-              if b not in s:
-                  s = s.replace(a,b)
-
-          # Slide 16 insight
+          reps = {'적자 지속':'<span class="risk">적자 지속</span>','영업손실 163억원':'<span class="risk">영업손실 163억원</span>','지분 전량 매각':'<span class="risk">지분 전량 매각</span>','신규 출점 재개':'<span class="hot">신규 출점 재개</span>','매출 163억원':'<span class="hot">매출 163억원</span>','흡수합병':'<span class="bluekey">흡수합병</span>','업무협약':'<span class="bluekey">업무협약</span>','A-벤처스 선정':'<span class="hot">A-벤처스 선정</span>','API·SaaS':'<span class="bluekey">API·SaaS</span>'}
+          for a,b in reps.items():
+              if b not in s: s = s.replace(a,b)
           biz_pat = r'(<section class="slide" data-part="8\. 주요 기업".*?</div>)(</section>)'
           biz_insight = '<div class="insight" data-anim style="--i:5">대표 기업 현황은 매출 규모만 보지 말고 <span class="y">적자·매각·제휴·재출점·SaaS 전환</span>처럼 현재 전략 변화의 키워드로 읽어야 합니다</div>'
           m = re.search(biz_pat, s, flags=re.S)
-          if not m:
-              raise SystemExit('biz section not found')
+          if not m: raise SystemExit('biz section not found')
           if '대표 기업 현황은 매출 규모만 보지 말고' not in m.group(0):
               s = s[:m.start()] + m.group(1) + biz_insight + m.group(2) + s[m.end():]
-
-          # Validate slide count
           count = len(re.findall(r'<section class="slide\b', s))
-          if count != 17:
-              raise SystemExit(f'Expected 17 slides, found {count}')
-
+          if count != 17: raise SystemExit(f'Expected 17 slides, found {count}')
           p.write_text(s, encoding='utf-8')
           print('refined selected slides')
           PY
@@ -106,3 +67,4 @@ jobs:
           git add special-lecture.html
           git commit -m 'Refine special lecture slide layouts and motion'
           git push
+# trigger: 1
