@@ -36,3 +36,4 @@ jobs:
           git add special-lecture.html
           git commit -m 'Update opportunity signal data to 2025'
           git push
+# trigger: 2026-08-20T12:26+09:00
