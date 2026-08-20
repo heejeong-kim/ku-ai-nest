@@ -2,8 +2,6 @@ name: Animate slide 4 trend charts
 on:
   push:
     branches: [main]
-    paths:
-      - '.github/workflows/animate-slide4-trends.yml'
 permissions:
   contents: write
 jobs:
@@ -29,7 +27,8 @@ jobs:
 @keyframes trendReboundPulse{0%,100%{transform:scale(1);opacity:.9}45%{transform:scale(1.65);opacity:1}65%{transform:scale(1.28);opacity:1}}
 '''
           if 'trendReboundPulse' in s:
-              raise SystemExit('animation already present')
+              print('animation already present')
+              raise SystemExit(0)
           if marker not in s:
               raise SystemExit('reduced motion marker not found')
           s=s.replace(marker,css+marker,1)
@@ -43,4 +42,3 @@ jobs:
           git add special-lecture.html
           git commit -m 'Animate slide 4 trend charts continuously'
           git push
-# trigger: 1
