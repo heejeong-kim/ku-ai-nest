@@ -1,0 +1,91 @@
+name: Normalize special lecture copy
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/normalize-special-copy.yml'
+permissions:
+  contents: write
+jobs:
+  normalize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Normalize body punctuation and insight tone
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          p = Path('special-lecture.html')
+          s = p.read_text(encoding='utf-8')
+
+          # 하단 인사이트는 경어체로 마무리
+          insight_map = {
+            '시장 성장의 출발점은 단순한 규모 확대가 아니라 <span class="y">양육가구 증가와 반복 지출 구조</span>에 있음':
+              '시장 성장의 출발점은 단순한 규모 확대가 아니라 <span class="y">양육가구 증가와 반복 지출 구조</span>에 있습니다',
+            '반려동물 산업은 <span class="y">양육가구 확대 → 반복 지출 증가 → 의료·미용·돌봄 서비스 이용 확대 → 관련 영업·인력 증가</span>로 이어지는 <span class="b">생활서비스 산업</span>으로 확장':
+              '반려동물 산업은 <span class="y">양육가구 확대 → 반복 지출 증가 → 의료·미용·돌봄 서비스 이용 확대 → 관련 영업·인력 증가</span>로 이어지는 <span class="b">생활서비스 산업</span>으로 확장되고 있습니다',
+            '시장 진입 시점은 단순 누적 규모보다 <span class="y">변곡점과 두 지표의 동행 여부</span>를 볼 때 더 선명. 2023년 영업장 감소폭이 더 컸던 점은 <span class="b">소규모 사업자 중심 구조조정 가능성</span>을 시사하나 직접 폐업 원인으로 단정 불가':
+              '시장 진입 시점은 단순 누적 규모보다 <span class="y">변곡점과 두 지표의 동행 여부</span>를 볼 때 더 선명합니다<br>2023년 영업장 감소폭이 더 컸던 점은 <span class="b">소규모 사업자 중심 구조조정 가능성</span>을 시사하지만 직접 폐업 원인으로 단정할 수 없습니다',
+            '두 수치는 같은 의미가 아님. <span class="y">144개+는 진입 신호</span>, <span class="b">78개는 생존·매출 신호</span>. 진입 풀보다 실제 매출 확인 풀은 훨씬 좁음':
+              '두 수치는 같은 의미가 아닙니다<br><span class="y">144개+는 진입 신호</span>, <span class="b">78개는 생존·매출 신호</span>이며 진입 풀보다 실제 매출 확인 풀은 훨씬 좁습니다',
+            '최근 출시가 반복되는 영역은 <span class="y">수요 존재 가능성</span>과 동시에 <span class="b">경쟁이 빠르게 늘어나는 영역</span>이라는 두 의미를 함께 확인':
+              '최근 출시가 반복되는 영역은 <span class="y">수요 존재 가능성</span>과 동시에 <span class="b">경쟁이 빠르게 늘어나는 영역</span>이라는 두 의미를 함께 확인해야 합니다',
+            '좋은 아이디어보다 먼저 볼 것: <span class="y">문제의 구체성 · 기존 대안 대비 차이 · 실제 검증 가능성</span>':
+              '좋은 아이디어보다 먼저 확인해야 할 것은 <span class="y">문제의 구체성 · 기존 대안 대비 차이 · 실제 검증 가능성</span>입니다',
+            '진입 가능성은 “좋은 시장인가”가 아니라 <span class="y">현재 팀이 최소 행동 데이터로 검증 가능한가</span>로 판단':
+              '진입 가능성은 “좋은 시장인가”가 아니라 <span class="y">현재 팀이 최소 행동 데이터로 검증 가능한가</span>로 판단해야 합니다',
+          }
+
+          insight_pattern = re.compile(r'(<div class="insight"[^>]*>)(.*?)(</div>)', re.S)
+          seen = 0
+          def fix_insight(m):
+              global seen
+              inner = m.group(2)
+              if inner in insight_map:
+                  inner = insight_map[inner]
+              else:
+                  visible = re.sub(r'<[^>]+>', '', inner).strip()
+                  if not re.search(r'(습니다|합니다|입니다|됩니다|해야 합니다)$', visible):
+                      raise SystemExit(f'Unmapped non-polite insight: {visible}')
+              seen += 1
+              return m.group(1) + inner + m.group(3)
+          s = insight_pattern.sub(fix_insight, s)
+          if seen != 7:
+              raise SystemExit(f'Expected 7 insight blocks, found {seen}')
+
+          # 슬라이드 본문 텍스트 노드에서 문장 종결용 마침표만 제거
+          slide_pattern = re.compile(r'(<section class="slide\b.*?</section>)', re.S)
+          def strip_sentence_periods(slide_match):
+              block = slide_match.group(1)
+              parts = re.split(r'(<[^>]+>)', block)
+              for i in range(0, len(parts), 2):
+                  # 소수점/날짜의 점은 보존하고, 공백 또는 텍스트 끝 앞의 종결점만 제거
+                  parts[i] = re.sub(r'\.(?=\s|$)', '', parts[i])
+              return ''.join(parts)
+          s = slide_pattern.sub(strip_sentence_periods, s)
+
+          # 검증: 인사이트는 모두 경어체 종결, 슬라이드 텍스트에는 종결점 없음
+          for m in insight_pattern.finditer(s):
+              visible = re.sub(r'<[^>]+>', '', m.group(2)).strip()
+              if not re.search(r'(습니다|합니다|입니다|됩니다|해야 합니다)$', visible):
+                  raise SystemExit(f'Insight ending check failed: {visible}')
+
+          for slide in slide_pattern.finditer(s):
+              parts = re.split(r'(<[^>]+>)', slide.group(1))
+              text = ''.join(parts[::2])
+              if re.search(r'\.(?=\s|$)', text):
+                  raise SystemExit('Sentence-ending period remains in slide text')
+
+          p.write_text(s, encoding='utf-8')
+          print(f'normalized {seen} insight blocks')
+          PY
+      - name: Commit normalized copy
+        run: |
+          if git diff --quiet; then exit 0; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add special-lecture.html
+          git commit -m 'Normalize lecture body punctuation and insight tone'
+          git push
