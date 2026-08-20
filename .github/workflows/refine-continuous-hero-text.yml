@@ -1,0 +1,48 @@
+name: Refine continuous hero text
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/refine-continuous-hero-text.yml'
+permissions:
+  contents: write
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Refine continuous hero text motion
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('index.html')
+          s=p.read_text()
+
+          old=".hero-copy{animation:heroCopyDrift 8s ease-in-out 1.5s infinite}"
+          new=".hero-copy{animation:heroCopyDrift 5.4s ease-in-out 1.35s infinite}"
+          if old not in s:
+              raise SystemExit('hero-copy animation marker not found')
+          s=s.replace(old,new,1)
+
+          old=".hero-copy h1 span{background-size:0 100%;background-repeat:no-repeat;animation:heroHighlight .8s ease .8s forwards}"
+          new=".hero-copy h1 span{display:inline-block;background-size:0 100%;background-repeat:no-repeat;animation:heroHighlight .8s ease .8s forwards,heroAccentPulse 3.6s ease-in-out 1.45s infinite}"
+          if old not in s:
+              raise SystemExit('hero title span marker not found')
+          s=s.replace(old,new,1)
+
+          old="@keyframes heroCopyDrift{0%,100%{transform:translate3d(0,0,0)}50%{transform:translate3d(0,-5px,0)}}"
+          new="@keyframes heroAccentPulse{0%,100%{translate:0 0;text-shadow:0 0 16px rgba(245,196,0,.08)}50%{translate:0 -3px;text-shadow:0 8px 28px rgba(245,196,0,.28)}}@keyframes heroCopyDrift{0%,100%{transform:translate3d(0,0,0)}35%{transform:translate3d(2px,-8px,0)}70%{transform:translate3d(-1px,-3px,0)}}"
+          if old not in s:
+              raise SystemExit('heroCopyDrift keyframe marker not found')
+          s=s.replace(old,new,1)
+
+          p.write_text(s)
+          PY
+      - name: Commit changes
+        run: |
+          if git diff --quiet; then exit 0; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git commit -m 'Match continuous hero text motion to reference'
+          git push
