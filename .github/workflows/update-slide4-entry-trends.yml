@@ -1,0 +1,57 @@
+name: Update slide 4 entry trends
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/update-slide4-entry-trends.yml'
+permissions:
+  contents: write
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Replace slide 4 with entry trend charts
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          p=Path('special-lecture.html')
+          s=p.read_text()
+
+          css='''
+.entry-status{display:inline-flex;align-items:center;width:max-content;margin-top:2px;padding:7px 11px;border-radius:11px;background:var(--yellow-100);color:#6d5700;font-size:15px;font-weight:700}
+.trend-pair{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:stretch}.trend-panel{background:#fff;border:1.5px solid var(--yellow-line);border-radius:24px;padding:22px 24px 18px;box-shadow:var(--shadow-sm)}.trend-panel.workers{border-color:rgba(49,90,216,.28);background:linear-gradient(160deg,#fff,var(--point-soft))}.trend-head{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;margin-bottom:8px}.trend-title{font-size:23px;font-weight:700;color:var(--ink)}.trend-current{font-size:18px;font-weight:700;color:var(--yellow-700);white-space:nowrap}.trend-panel.workers .trend-current{color:var(--point)}.trend-svg{width:100%;height:220px;display:block;overflow:visible}.trend-svg .grid{stroke:#ece7d6;stroke-width:1}.trend-svg .line{fill:none;stroke:var(--yellow-600);stroke-width:5;stroke-linecap:round;stroke-linejoin:round}.trend-svg .dot{fill:#fff;stroke:var(--yellow-600);stroke-width:4}.trend-panel.workers .trend-svg .line{stroke:var(--point)}.trend-panel.workers .trend-svg .dot{stroke:var(--point)}.trend-years,.trend-yoy{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;text-align:center}.trend-years{font-size:13px;font-weight:700;color:var(--muted);margin-top:-3px}.trend-yoy{margin-top:7px}.yoy{display:inline-flex;justify-content:center;padding:4px 2px;border-radius:7px;background:#f4f1e8;color:#6d675a;font-size:11px;font-weight:700}.yoy.down{background:#fff0ed;color:#b63d2f}.yoy.jump{background:var(--yellow-100);color:#6d5700}.trend-panel.workers .yoy.jump{background:#e8edff;color:var(--point)}.trend-summary{margin-top:11px;padding-top:10px;border-top:1px dashed #ddd5bd;font-size:16px;line-height:1.42;color:var(--ink-2);word-break:keep-all}.entry-readout{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px}.readout{border-radius:16px;padding:15px 18px;font-size:16px;line-height:1.45;word-break:keep-all}.readout.signal{background:#171717;color:#f7edbd}.readout.rule{background:var(--point-soft);border:1px solid rgba(49,90,216,.2);color:#27396f}.readout b{display:block;margin-bottom:3px;font-size:17px}.readout.signal b{color:var(--yellow)}.readout.rule b{color:var(--point)}
+'''
+          if '.entry-status{' not in s:
+              marker='.opp-table{'
+              if marker not in s:
+                  raise SystemExit('CSS insertion marker not found')
+              s=s.replace(marker,css+'\n'+marker,1)
+
+          slide='''<section class="slide" data-menu-part="2. 창업 기회" data-menu="2-1. 창업 기회영역·시장 진입 추이">
+<header class="s-head"><p class="kicker" data-anim style="--i:0">OPPORTUNITY · 1/2</p><h2 class="s-title" data-anim style="--i:1">창업 기회영역과 실제 시장 진입 사례</h2><p class="s-sub" data-anim style="--i:2">영업장·종사자 추이(2020~2025)로 보는 시장 진입 신호</p><div class="entry-status" data-anim style="--i:3">2026년 조사결과는 아직 공표 전 · 통상 전년말 기준 조사가 이듬해 상반기 공표</div></header>
+<div class="s-body">
+<div class="trend-pair" data-anim style="--i:4">
+<article class="trend-panel business"><div class="trend-head"><div class="trend-title">영업장 추이</div><div class="trend-current">2025 · 24,384개소</div></div><svg class="trend-svg" viewBox="0 0 560 230" role="img" aria-label="2020년부터 2025년까지 반려동물 영업장 추이"><line class="grid" x1="35" y1="55" x2="530" y2="55"/><line class="grid" x1="35" y1="120" x2="530" y2="120"/><line class="grid" x1="35" y1="185" x2="530" y2="185"/><polyline class="line" points="45,181 140,149 235,117 330,151 425,83 520,64"/><circle class="dot" cx="45" cy="181" r="6"/><circle class="dot" cx="140" cy="149" r="6"/><circle class="dot" cx="235" cy="117" r="6"/><circle class="dot" cx="330" cy="151" r="6"/><circle class="dot" cx="425" cy="83" r="6"/><circle class="dot" cx="520" cy="64" r="6"/></svg><div class="trend-years"><span>2020</span><span>2021</span><span>2022</span><span>2023</span><span>2024</span><span>2025</span></div><div class="trend-yoy"><span class="yoy">+12.4%</span><span class="yoy">+7.3%</span><span class="yoy">+6.7%</span><span class="yoy down">-6.8%</span><span class="yoy jump">+14.5%</span><span class="yoy">+3.5%</span></div><p class="trend-summary">19,285 → 24,384개소. <b>2023년 감소 뒤 2024년 가장 크게 반등</b>하고 2025년 증가율은 3%대로 낮아졌습니다.</p></article>
+<article class="trend-panel workers"><div class="trend-head"><div class="trend-title">종사자 추이</div><div class="trend-current">2025 · 30,426명</div></div><svg class="trend-svg" viewBox="0 0 560 230" role="img" aria-label="2020년부터 2025년까지 반려동물 관련 종사자 추이"><line class="grid" x1="35" y1="55" x2="530" y2="55"/><line class="grid" x1="35" y1="120" x2="530" y2="120"/><line class="grid" x1="35" y1="185" x2="530" y2="185"/><polyline class="line" points="45,194 140,190 235,162 330,176 425,89 520,63"/><circle class="dot" cx="45" cy="194" r="6"/><circle class="dot" cx="140" cy="190" r="6"/><circle class="dot" cx="235" cy="162" r="6"/><circle class="dot" cx="330" cy="176" r="6"/><circle class="dot" cx="425" cy="89" r="6"/><circle class="dot" cx="520" cy="63" r="6"/></svg><div class="trend-years"><span>2020</span><span>2021</span><span>2022</span><span>2023</span><span>2024</span><span>2025</span></div><div class="trend-yoy"><span class="yoy">+9.4%</span><span class="yoy">+0.7%</span><span class="yoy">+4.9%</span><span class="yoy down">-2.3%</span><span class="yoy jump">+14.9%</span><span class="yoy">+3.8%</span></div><p class="trend-summary">24,691 → 30,426명. 영업장과 같은 변곡점을 보이지만 <b>2023년 감소폭은 더 완만</b>했습니다(-2.3% vs -6.8%).</p></article>
+</div>
+<div class="entry-readout" data-anim style="--i:5"><div class="readout signal"><b>공통 변곡점</b>2023 감소 → 2024 급반등 → 2025 3%대 증가. 두 지표가 같은 방향으로 움직인다는 점이 시장 활동의 회복 신호입니다.</div><div class="readout rule"><b>시장 진입 판단</b>누적 개수보다 <strong>어느 해에 증감폭이 가장 큰지</strong>, 그리고 <strong>영업장과 종사자 추이가 서로 일치하는지</strong>를 함께 봅니다.</div></div>
+<p class="source-note" data-anim style="--i:6">출처: <a href="https://www.mafra.go.kr/bbs/mafra/68/248855/download.do" target="_blank" rel="noopener">2020년 반려동물 보호·복지 실태조사</a> · <a href="https://www.mafra.go.kr/bbs/home/792/576080/download.do" target="_blank" rel="noopener">반려동물 영업 현황—연도별 종사자 수</a> · <a href="https://www.mafra.go.kr/bbs/home/792/570107/download.do" target="_blank" rel="noopener">2022년 조사</a> · <a href="https://www.mafra.go.kr/bbs/home/792/584544/download.do" target="_blank" rel="noopener">2023년 조사</a> · <a href="https://www.mafra.go.kr/home/5109/subview.do;jsessionid=OkzadVCDbE96W4YQ7g0jmSn7.inst21?enc=Zm5jdDF8QEB8JTJGYmJzJTJGaG9tZSUyRjc5MiUyRjU3NDI3MyUyRmFydGNsVmlldy5kbyUzRg%3D%3D" target="_blank" rel="noopener">2024년 조사</a> · <a href="https://www.mafra.go.kr/bbs/home/792/578282/artclView.do?sicode=01" target="_blank" rel="noopener">2025년 조사(2026 공표)</a></p>
+</div>
+<div class="insight-wrap" data-anim style="--i:7"><div class="insight">시장 진입 시점은 단순 누적 규모보다 <span class="insight-main">변곡점과 두 지표의 동행 여부</span>를 함께 볼 때 더 선명해집니다. 2023년 영업장 감소폭이 더 컸던 점은 <span class="insight-point">소규모 사업자 중심 구조조정 가능성</span>을 시사하지만, 직접적인 폐업 규모 통계로 단정할 수는 없습니다.</div></div>
+</section>'''
+          pattern=r'<section class="slide" data-menu-part="2\. 창업 기회" data-menu="2-1\. 펫 분야 창업 진입 신호">.*?</section>(?=\n<section class="slide" data-menu-part="2\. 창업 기회" data-menu="2-2\.)'
+          s2,n=re.subn(pattern,slide,s,count=1,flags=re.S)
+          if n!=1:
+              raise SystemExit(f'slide replacement count={n}')
+          p.write_text(s2)
+          PY
+      - name: Commit changes
+        run: |
+          if git diff --quiet; then exit 0; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add special-lecture.html
+          git commit -m 'Update slide 4 with entry trend charts'
+          git push
