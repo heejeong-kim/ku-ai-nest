@@ -1,0 +1,39 @@
+name: Refine hero CTA
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/refine-hero-cta.yml'
+permissions:
+  contents: write
+jobs:
+  refine:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Split hero navigation into three CTA cards
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('index.html')
+          s=p.read_text(encoding='utf-8')
+          old_css='''.hero-actions{display:flex;gap:10px;margin-top:36px;flex-wrap:wrap}.hero-nav-cta{display:inline-flex;align-items:center;gap:2px;width:max-content;max-width:54%;padding:7px 8px;border:1px solid rgba(138,112,0,.18);border-radius:16px;background:rgba(255,255,255,.76);box-shadow:0 12px 30px rgba(88,69,0,.08);backdrop-filter:blur(10px)}.hero-nav-link{display:inline-flex;align-items:center;gap:7px;padding:8px 10px;border-radius:10px;color:var(--ink);text-decoration:none;font-size:16px;font-weight:700;white-space:nowrap;transition:transform .22s ease,background .22s ease}.hero-nav-link:hover{background:var(--yellow-soft);transform:translateY(-2px)}.hero-nav-link span{font-size:17px;line-height:1}.hero-nav-sep{color:#c7bc8a;font-weight:500;line-height:1}'''
+          new_css='''.hero-actions{display:flex;gap:12px;margin-top:36px;flex-wrap:wrap}.hero-nav-cta{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;width:min(820px,54%);max-width:none}.hero-nav-link{position:relative;min-height:76px;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:15px 16px;border:1px solid rgba(23,23,23,.12);border-radius:17px;background:rgba(255,255,255,.9);color:var(--ink);text-decoration:none;font-size:16px;font-weight:700;white-space:nowrap;box-shadow:0 14px 32px rgba(67,52,0,.11);backdrop-filter:blur(10px);transition:transform .22s ease,box-shadow .22s ease,background .22s ease,border-color .22s ease}.hero-nav-link:hover,.hero-nav-link:focus-visible{transform:translateY(-5px);box-shadow:0 20px 40px rgba(67,52,0,.17);border-color:rgba(23,23,23,.22)}.hero-nav-link.curriculum{background:#171717;color:#fff;border-color:#171717}.hero-nav-link.special{background:linear-gradient(135deg,#f5c400,#ffe36a);color:#171717;border-color:#d5aa00}.hero-nav-link.lecture{background:rgba(255,255,255,.94);color:#171717;border-color:rgba(49,90,216,.2)}.hero-nav-label{display:inline-flex;align-items:center;gap:8px}.hero-nav-icon{font-size:20px;line-height:1}.hero-nav-arrow{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:999px;background:rgba(23,23,23,.08);font-size:19px;line-height:1;transition:transform .22s ease,background .22s ease}.hero-nav-link.curriculum .hero-nav-arrow{background:rgba(245,196,0,.18);color:var(--yellow)}.hero-nav-link.special .hero-nav-arrow{background:rgba(23,23,23,.12)}.hero-nav-link.lecture .hero-nav-arrow{background:var(--blue-soft);color:var(--blue)}.hero-nav-link:hover .hero-nav-arrow,.hero-nav-link:focus-visible .hero-nav-arrow{transform:translateX(4px)}'''
+          old_html='''<div class="hero-actions hero-nav-cta" aria-label="주요 섹션 이동"><a class="hero-nav-link" href="#curriculum-table"><span aria-hidden="true">🐾</span>커리큘럼</a><span class="hero-nav-sep" aria-hidden="true">|</span><a class="hero-nav-link" href="#special"><span aria-hidden="true">📈</span>특강</a><span class="hero-nav-sep" aria-hidden="true">|</span><a class="hero-nav-link" href="#lecture"><span aria-hidden="true">📚</span>강의교안</a></div>'''
+          new_html='''<div class="hero-actions hero-nav-cta" aria-label="주요 섹션 이동"><a class="hero-nav-link curriculum" href="#curriculum-table"><span class="hero-nav-label"><span class="hero-nav-icon" aria-hidden="true">🐾</span>커리큘럼</span><span class="hero-nav-arrow" aria-hidden="true">→</span></a><a class="hero-nav-link special" href="#special"><span class="hero-nav-label"><span class="hero-nav-icon" aria-hidden="true">📈</span>특강</span><span class="hero-nav-arrow" aria-hidden="true">→</span></a><a class="hero-nav-link lecture" href="#lecture"><span class="hero-nav-label"><span class="hero-nav-icon" aria-hidden="true">📚</span>강의교안</span><span class="hero-nav-arrow" aria-hidden="true">→</span></a></div>'''
+          old_mobile='''@media(max-width:760px){body{font-size:18px}.section-head{align-items:flex-start}.special-deck-cta{padding:10px 12px;font-size:14px}.hero-nav-cta{max-width:100%;padding:6px}.hero-nav-link{font-size:14px;padding:7px 6px;gap:4px}.hero-nav-link span{font-size:15px}.hero-nav-sep{font-size:13px}'''
+          new_mobile='''@media(max-width:760px){body{font-size:18px}.section-head{align-items:flex-start}.special-deck-cta{padding:10px 12px;font-size:14px}.hero-nav-cta{grid-template-columns:1fr;width:100%;gap:10px}.hero-nav-link{min-height:62px;font-size:15px;padding:12px 14px}.hero-nav-icon{font-size:18px}.hero-nav-arrow{width:28px;height:28px;font-size:18px}'''
+          for old,new,label in [(old_css,new_css,'desktop CTA CSS'),(old_html,new_html,'CTA HTML'),(old_mobile,new_mobile,'mobile CTA CSS')]:
+              if old not in s:
+                  raise SystemExit(f'{label} target not found')
+              s=s.replace(old,new,1)
+          p.write_text(s,encoding='utf-8')
+          PY
+      - name: Commit changes
+        run: |
+          if git diff --quiet; then exit 0; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git commit -m 'Split hero navigation into three CTA cards'
+          git push
