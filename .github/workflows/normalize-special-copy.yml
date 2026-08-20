@@ -20,7 +20,6 @@ jobs:
           p = Path('special-lecture.html')
           s = p.read_text(encoding='utf-8')
 
-          # 하단 인사이트는 경어체로 마무리
           insight_map = {
             '시장 성장의 출발점은 단순한 규모 확대가 아니라 <span class="y">양육가구 증가와 반복 지출 구조</span>에 있음':
               '시장 성장의 출발점은 단순한 규모 확대가 아니라 <span class="y">양육가구 증가와 반복 지출 구조</span>에 있습니다',
@@ -55,18 +54,15 @@ jobs:
           if seen != 7:
               raise SystemExit(f'Expected 7 insight blocks, found {seen}')
 
-          # 슬라이드 본문 텍스트 노드에서 문장 종결용 마침표만 제거
           slide_pattern = re.compile(r'(<section class="slide\b.*?</section>)', re.S)
           def strip_sentence_periods(slide_match):
               block = slide_match.group(1)
               parts = re.split(r'(<[^>]+>)', block)
               for i in range(0, len(parts), 2):
-                  # 소수점/날짜의 점은 보존하고, 공백 또는 텍스트 끝 앞의 종결점만 제거
                   parts[i] = re.sub(r'\.(?=\s|$)', '', parts[i])
               return ''.join(parts)
           s = slide_pattern.sub(strip_sentence_periods, s)
 
-          # 검증: 인사이트는 모두 경어체 종결, 슬라이드 텍스트에는 종결점 없음
           for m in insight_pattern.finditer(s):
               visible = re.sub(r'<[^>]+>', '', m.group(2)).strip()
               if not re.search(r'(습니다|합니다|입니다|됩니다|해야 합니다)$', visible):
@@ -89,3 +85,4 @@ jobs:
           git add special-lecture.html
           git commit -m 'Normalize lecture body punctuation and insight tone'
           git push
+# trigger: 1
