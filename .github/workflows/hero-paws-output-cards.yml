@@ -1,0 +1,78 @@
+name: Hero paws and output cards
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/hero-paws-output-cards.yml'
+permissions:
+  contents: write
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Add paw motion and output cards
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('index.html')
+          s=p.read_text()
+
+          old_hero='<section class="hero" id="hero"><div class="shell hero-inner hero-copy">'
+          new_hero='<section class="hero" id="hero"><div class="hero-paws" aria-hidden="true"></div><div class="shell hero-inner hero-copy">'
+          if old_hero not in s:
+              raise SystemExit('hero opening not found')
+          s=s.replace(old_hero,new_hero,1)
+
+          css_marker='.hero-inner{position:relative;z-index:2;padding:120px 0 100px}.hero-copy{animation:heroCopyDrift 8s ease-in-out 1.5s infinite}'
+          css_repl='.hero-paws{position:absolute;inset:-18%;z-index:0;pointer-events:none;opacity:.1;background-image:url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27120%27 height=%27120%27 viewBox=%270 0 120 120%27%3E%3Cg fill=%27%23856900%27%3E%3Cellipse cx=%2760%27 cy=%2768%27 rx=%2718%27 ry=%2716%27/%3E%3Cellipse cx=%2738%27 cy=%2748%27 rx=%278%27 ry=%2711%27 transform=%27rotate(-20 38 48)%27/%3E%3Cellipse cx=%2753%27 cy=%2737%27 rx=%278%27 ry=%2711%27 transform=%27rotate(-8 53 37)%27/%3E%3Cellipse cx=%2769%27 cy=%2737%27 rx=%278%27 ry=%2711%27 transform=%27rotate(8 69 37)%27/%3E%3Cellipse cx=%2784%27 cy=%2749%27 rx=%278%27 ry=%2711%27 transform=%27rotate(20 84 49)%27/%3E%3C/g%3E%3C/svg%3E");background-size:138px 138px;transform:rotate(-8deg) scale(1.08);animation:pawFieldDrift 22s linear infinite}.hero-inner{position:relative;z-index:2;padding:120px 0 100px}.hero-copy{animation:heroCopyDrift 8s ease-in-out 1.5s infinite}'
+          if css_marker not in s:
+              raise SystemExit('hero-inner css marker not found')
+          s=s.replace(css_marker,css_repl,1)
+
+          key_marker='@keyframes heroBgShift{0%{background-position:78% 28%,18% 74%,0% 50%}50%{background-position:72% 34%,24% 68%,52% 46%}100%{background-position:84% 22%,12% 80%,100% 54%}}'
+          key_repl=key_marker+'@keyframes pawFieldDrift{0%{background-position:0 0;transform:rotate(-8deg) scale(1.08) translate3d(0,0,0)}50%{background-position:92px 138px;transform:rotate(-6deg) scale(1.11) translate3d(12px,-8px,0)}100%{background-position:184px 276px;transform:rotate(-8deg) scale(1.08) translate3d(0,0,0)}}'
+          if key_marker not in s:
+              raise SystemExit('heroBgShift keyframe not found')
+          s=s.replace(key_marker,key_repl,1)
+
+          old_output='<div class="info wide"><b>산출물 구분</b><span>중간 작업물: 시장자료, 경쟁사표, 문제 후보, 프롬프트 결과<br>필수 의사결정 결과: 핵심 문제 1개, 최종 아이템 1개, 가치제안, MVP 가설 1개<br>최종 제출: 사업계획 핵심안, PRD, MVP URL, 검증 데이터</span></div>'
+          new_output='<div class="info wide output-wrap"><b>산출물 구분</b><div class="output-cards"><div class="output-card"><span class="output-label">중간 작업물</span><strong>시장자료 · 경쟁사표 · 문제 후보 · 프롬프트 결과</strong></div><div class="output-card"><span class="output-label">필수 의사결정 결과</span><strong>핵심 문제 1개 · 최종 아이템 1개 · 가치제안 · MVP 가설 1개</strong></div><div class="output-card final"><span class="output-label">최종 제출</span><strong>사업계획 핵심안 · PRD · MVP URL · 검증 데이터</strong></div></div></div>'
+          if old_output not in s:
+              raise SystemExit('output block not found')
+          s=s.replace(old_output,new_output,1)
+
+          info_css='.info b{display:block;font-size:14px;color:#806500;margin-bottom:7px}.info span{font-size:18px;color:var(--ink2)}'
+          info_repl='.info b{display:block;font-size:14px;color:#806500;margin-bottom:7px}.info span{font-size:18px;color:var(--ink2)}.output-wrap{padding-bottom:24px}.output-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:12px}.output-card{min-height:128px;padding:20px;border:1px solid var(--line);border-radius:16px;background:#fff;display:flex;flex-direction:column;justify-content:space-between;gap:16px}.output-card .output-label{font-size:14px;font-weight:700;color:#806500}.output-card strong{font-size:18px;line-height:1.55;color:var(--ink);font-weight:600}.output-card.final{background:#171717;border-color:#171717;box-shadow:0 14px 30px rgba(0,0,0,.13)}.output-card.final .output-label{color:var(--yellow)}.output-card.final strong{color:#fff}'
+          if info_css not in s:
+              raise SystemExit('info css marker not found')
+          s=s.replace(info_css,info_repl,1)
+
+          media_marker='@media(max-width:1100px){.shell{width:min(100% - 40px,1520px)}.overview-grid{grid-template-columns:1fr}'
+          media_repl='@media(max-width:1100px){.shell{width:min(100% - 40px,1520px)}.overview-grid{grid-template-columns:1fr}.output-cards{grid-template-columns:1fr 1fr}.output-card.final{grid-column:1/-1}'
+          if media_marker not in s:
+              raise SystemExit('1100 media marker not found')
+          s=s.replace(media_marker,media_repl,1)
+
+          mobile_marker='@media(max-width:760px){body{font-size:18px}'
+          mobile_repl='@media(max-width:760px){body{font-size:18px}.output-cards{grid-template-columns:1fr}.output-card.final{grid-column:auto}'
+          if mobile_marker not in s:
+              raise SystemExit('mobile media marker not found')
+          s=s.replace(mobile_marker,mobile_repl,1)
+
+          reduce_old='@media(prefers-reduced-motion:reduce){.hero,.hero:before,.hero:after,.pet-card,.hero-copy,.hero-copy>*{animation:none!important}'
+          reduce_new='@media(prefers-reduced-motion:reduce){.hero,.hero:before,.hero:after,.hero-paws,.pet-card,.hero-copy,.hero-copy>*{animation:none!important}'
+          if reduce_old not in s:
+              raise SystemExit('reduced motion marker not found')
+          s=s.replace(reduce_old,reduce_new,1)
+
+          p.write_text(s)
+          PY
+      - name: Commit changes
+        run: |
+          if git diff --quiet; then exit 0; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git commit -m 'Add animated paw background and output cards'
+          git push
