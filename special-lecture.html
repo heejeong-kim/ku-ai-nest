@@ -27,8 +27,8 @@
   --card-soft:#faf7ed;
   --shadow:0 18px 48px -20px rgba(88,69,0,.24),0 6px 18px -10px rgba(88,69,0,.14);
   --shadow-sm:0 10px 26px -16px rgba(88,69,0,.26);
-  --DW:1280px;
-  --DH:905px;
+  --DW:1520px;
+  --DH:1075px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
@@ -286,7 +286,7 @@ function renderMenu(){
 }
 
 function scaleDeck(){
-  const sw=1280,sh=905;
+  const sw=1520,sh=1075;
   const scale=Math.min(innerWidth/sw,innerHeight/sh);
   deck.style.transform=`translate(-50%,-50%) scale(${scale})`;
 }
