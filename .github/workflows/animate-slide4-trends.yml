@@ -1,7 +1,7 @@
 name: Animate slide 4 trend charts
 on:
-  push:
-    branches: [main]
+  issues:
+    types: [opened]
 permissions:
   contents: write
 jobs:
