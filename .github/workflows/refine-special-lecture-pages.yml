@@ -1,13 +1,13 @@
 name: Refine special lecture pages
 on:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/refine-special-lecture-pages.yml'
+  issues:
+    types: [opened]
 permissions:
   contents: write
+  issues: write
 jobs:
   refine:
+    if: contains(github.event.issue.title, 'trigger special lecture refinement')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -28,8 +28,7 @@ jobs:
 @keyframes priorityPulse{0%,100%{transform:translateY(0);box-shadow:none}50%{transform:translateY(-5px);box-shadow:0 10px 22px -14px rgba(0,0,0,.4)}}@keyframes priorityArrow{0%,100%{transform:translateX(0);opacity:.65}50%{transform:translateX(5px);opacity:1}}@keyframes closeFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}@keyframes closeGlow{0%,100%{text-shadow:0 0 0 rgba(245,196,0,0)}50%{text-shadow:0 12px 34px rgba(245,196,0,.36)}}@keyframes closeSoftFloat{0%,100%{transform:translateY(0);opacity:.86}50%{transform:translateY(-6px);opacity:1}}@keyframes qaPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
 '''
           if 'requested slide refinements' not in s:
-              if css_marker not in s:
-                  raise SystemExit('CSS marker not found')
+              if css_marker not in s: raise SystemExit('CSS marker not found')
               s = s.replace(css_marker, css + '\n' + css_marker, 1)
           examples = {'성장률 착시':['펫 커머스','건강 앱','동반 여행'],'기능 추가형 차별화':['예약 기능','리뷰 기능','추천 기능'],'AI 목적화':['AI 상담','AI 추천','AI 진단'],'초기 고객 범위 과다':['모든 반려인','전 연령 반려견','전국 보호자'],'규제·전문가 판단 누락':['진료 판단','보험 비교','영양 처방'],'검증 인프라 과다':['하드웨어','재고 상품','병원 제휴'],'고객 행동 변화 과다':['매일 기록','새 기기 착용','복잡한 입력']}
           for title, vals in examples.items():
@@ -57,7 +56,6 @@ jobs:
           count = len(re.findall(r'<section class="slide\b', s))
           if count != 17: raise SystemExit(f'Expected 17 slides, found {count}')
           p.write_text(s, encoding='utf-8')
-          print('refined selected slides')
           PY
       - name: Commit refined slides
         run: |
@@ -67,4 +65,8 @@ jobs:
           git add special-lecture.html
           git commit -m 'Refine special lecture slide layouts and motion'
           git push
-# trigger: 1
+      - name: Close trigger issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.update({owner: context.repo.owner, repo: context.repo.repo, issue_number: context.payload.issue.number, state: 'closed'});
