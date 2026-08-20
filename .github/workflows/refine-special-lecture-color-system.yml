@@ -20,15 +20,16 @@ jobs:
 
           old='--yellow:#f5c400;'
           new='--main:#f5c400;--sub:#fff3b0;--second:#171717;--point:#315ad8;--point-soft:#eef2ff;--yellow:#f5c400;'
-          if old not in s:
-              raise SystemExit('root color marker not found')
-          s=s.replace(old,new,1)
+          if '--main:#f5c400;' not in s:
+              if old not in s:
+                  raise SystemExit('root color marker not found')
+              s=s.replace(old,new,1)
 
-          marker='.insight::before{content:"\\201C";position:absolute;left:22px;top:8px;font-size:58px;line-height:1;color:var(--yellow-600);opacity:.52;font-family:Georgia,serif}'
+          marker='.insight::before{content:"\\201C";position:absolute;left:20px;top:6px;font-size:54px;line-height:1;color:var(--yellow-600);opacity:.52;font-family:Georgia,serif}'
           addition='''\n.insight{background:linear-gradient(90deg,var(--yellow-50) 0%,#fff 62%,var(--point-soft) 100%);border-left-color:var(--main)}\n.insight .insight-main{color:#8a6b00;font-weight:700}\n.insight .insight-point{display:inline-block;position:relative;color:var(--point);font-weight:700;z-index:0}\n.insight .insight-point::after{content:"";position:absolute;left:-3px;right:-3px;bottom:1px;height:8px;border-radius:999px;background:rgba(49,90,216,.13);z-index:-1}\n'''
-          if marker not in s:
-              raise SystemExit('insight css marker not found')
           if '.insight .insight-point' not in s:
+              if marker not in s:
+                  raise SystemExit('insight css marker not found')
               s=s.replace(marker,marker+addition,1)
 
           replacements=[
@@ -38,9 +39,10 @@ jobs:
              '반려동물 산업은 <span class="insight-main">양육가구 확대 → 반복 지출 증가 → 의료·미용·돌봄 서비스 이용 확대 → 관련 영업·인력 증가</span>로 이어지는 <span class="insight-point">생활서비스 산업</span>으로 확장되고 있습니다.')
           ]
           for old_text,new_text in replacements:
-              if old_text not in s:
+              if old_text in s:
+                  s=s.replace(old_text,new_text,1)
+              elif new_text not in s:
                   raise SystemExit('insight text marker not found: '+old_text[:30])
-              s=s.replace(old_text,new_text,1)
 
           p.write_text(s)
           PY
@@ -52,3 +54,4 @@ jobs:
           git add special-lecture.html
           git commit -m 'Define lecture color system and emphasize insights'
           git push
+# trigger: 2026-08-20-1209
