@@ -1,0 +1,33 @@
+name: Rename special lecture CTA
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/rename-special-cta.yml'
+permissions:
+  contents: write
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Rename CTA
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('index.html')
+          s=p.read_text()
+          old='슬라이드 발표자료 <span aria-hidden="true">↗</span>'
+          new='발표자료 보기 <span aria-hidden="true">↗</span>'
+          if old not in s:
+              raise SystemExit('CTA text not found')
+          p.write_text(s.replace(old,new,1))
+          PY
+      - name: Commit changes
+        run: |
+          if git diff --quiet; then exit 0; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git commit -m 'Rename special lecture CTA'
+          git push
