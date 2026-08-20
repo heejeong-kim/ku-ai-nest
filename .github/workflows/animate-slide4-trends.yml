@@ -43,3 +43,4 @@ jobs:
           git add special-lecture.html
           git commit -m 'Animate slide 4 trend charts continuously'
           git push
+# trigger: 1
