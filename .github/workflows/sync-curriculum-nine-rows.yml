@@ -1,0 +1,34 @@
+name: Sync curriculum nine rows
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/sync-curriculum-nine-rows.yml'
+permissions:
+  contents: write
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Restructure curriculum table
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('index.html')
+          s=p.read_text()
+          old='''<div class="card schedule"><div class="table-wrap"><table class="data-table"><thead><tr><th>시간</th><th>소요</th><th>구성</th><th>핵심 산출물</th></tr></thead><tbody><tr><td>13:00–13:10</td><td>10분</td><td>오리엔테이션</td><td>2회차 산출물 점검</td></tr><tr><td>13:10–13:45</td><td>35분</td><td><b>0. 특강</b> &gt; 펫 산업 특강: 핵심 동향·기회영역·실패유형·진입조건·데이터 출처</td><td>산업 이해 기준과 조사 출처 목록</td></tr><tr><td>13:45–14:10</td><td>25분</td><td><b>1. 시장·경쟁</b> &gt; 시장·트렌드·경쟁사 분석</td><td>시장·트렌드 근거와 경쟁 서비스 비교표</td></tr><tr><td>14:10–14:35</td><td>25분</td><td><b>2. 페인포인트</b> &gt; 공식데이터 기반 니즈·페인포인트 리서치</td><td>근거 기반 페인포인트 3개 이상</td></tr><tr><td>14:35–14:45</td><td>10분</td><td><b>3. 아이템·가치</b> &gt; 틈새 도출·아이템 확정</td><td>최종 아이템 1개와 가치제안</td></tr><tr><td>14:45–14:55</td><td>10분</td><td>브레이크</td><td>휴식</td></tr><tr><td>14:55–15:20</td><td>25분</td><td><b>4. 사업계획서</b> &gt; 사업계획서 핵심항목</td><td>문제-솔루션-타겟-BM 초안</td></tr><tr><td>15:20–15:40</td><td>20분</td><td><b>5. MVP</b> &gt; MVP 범위·유저 플로우·AI 역할 정의</td><td>검증 가설 1개, 핵심 기능 3개, AI 역할, 유저 플로우</td></tr><tr><td>15:40–16:00</td><td>20분</td><td><b>5. MVP</b> &gt; AI 포함 MVP PRD 작성</td><td>핵심 기능·화면·AI 처리·데이터 구조 PRD</td></tr><tr><td>16:00–16:45</td><td>45분</td><td><b>5. MVP</b> &gt; AI 기반 웹 MVP 구현</td><td>AI 기능이 작동하는 웹 MVP URL (Google Sheets 연동은 선택)</td></tr><tr><td>16:45–17:00</td><td>15분</td><td><b>6. 제출</b> &gt; 최종 산출물 정리·제출</td><td>사업계획서·AI 웹 MVP·검증데이터 제출 패키지</td></tr></tbody></table></div></div>'''
+          new='''<div class="card schedule"><div class="table-wrap"><table class="data-table"><thead><tr><th>시간</th><th>소요</th><th>구성</th><th>작업 내용</th></tr></thead><tbody><tr><td>13:00–13:10</td><td>10분</td><td><b>오리엔테이션</b></td><td>2회차 산출물 점검, 팀별 역할 분담, 진행 방식 확인</td></tr><tr><td>13:10–13:45</td><td>35분</td><td><b>특강</b></td><td>펫 산업 핵심 동향·기회영역·실패유형·진입조건·데이터 출처 확인</td></tr><tr><td>13:45–14:10</td><td>25분</td><td><b>1. 시장·트렌드·경쟁사 분석</b></td><td>아이디어·시장 구조화 → 시장·트렌드·기회영역 조사 → 직접·간접 경쟁과 비소비 대안 비교 → 다음 단계 페인포인트 후보 도출</td></tr><tr><td>14:10–14:35</td><td>25분</td><td><b>2. 공식데이터 기반 고객 니즈·페인포인트 검증</b></td><td>1단계에서 도출한 페인포인트 후보를 공식통계·공공데이터로 검증하고 문제의 존재·규모·빈도·대상 고객·손실 근거를 정리</td></tr><tr><td>14:35–14:45</td><td>10분</td><td><b>3. 최종 아이템 확정·가치제안</b></td><td>검증된 핵심 페인포인트 1개를 기준으로 최종 사업 아이템 1개와 핵심 고객·사용 상황·해결방식·가치제안을 확정</td></tr><tr><td>14:45–15:20</td><td>35분</td><td><b>4. 사업계획서 핵심항목·초안 작성</b></td><td>브레이크 10분 후 1~3단계 결과를 바꾸지 않고 문제 → 근거 → 솔루션 → 타겟 → 비즈니스모델 흐름으로 사업계획서 핵심 초안을 작성</td></tr><tr><td>15:20–16:45</td><td>85분</td><td><b>5. AI 기반 서비스 콘셉트·웹 MVP 구현</b></td><td>MVP 검증 가설·핵심 기능 3개·유저 플로우·AI 역할 정의 → AI 포함 PRD 작성 → Claude Code로 실제 작동하는 웹 MVP 구현 → 필요 시 Google Sheets·Apps Script 연동</td></tr><tr><td>16:45–17:00</td><td>15분</td><td><b>6. 최종 산출물 정리·제출</b></td><td>사업계획서·AI 웹 MVP·핵심 근거와 검증 결과를 하나의 제출 패키지로 정리하고 타겟 고객·핵심 문제·가치제안·MVP 가설·링크 작동 여부를 최종 확인</td></tr><tr><td>17:00</td><td>—</td><td><b>마무리</b></td><td>제출 여부 확인 및 후속 안내</td></tr></tbody></table></div></div>'''
+          if old not in s:
+              raise SystemExit('curriculum table block not found')
+          s=s.replace(old,new,1)
+          p.write_text(s)
+          PY
+      - name: Commit changes
+        run: |
+          if git diff --quiet; then exit 0; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git commit -m 'Restructure curriculum to six lecture stages'
+          git push
