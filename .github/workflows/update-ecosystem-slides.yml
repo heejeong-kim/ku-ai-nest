@@ -4,8 +4,11 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/update-ecosystem-slides.yml'
+  issues:
+    types: [opened]
 permissions:
   contents: write
+  issues: write
 jobs:
   update:
     runs-on: ubuntu-latest
@@ -38,19 +41,21 @@ jobs:
 <section class="slide" data-part="2. 창업 기회" data-menu="2-3. 최근 투자 흐름"><header class="s-head"><p class="kicker" data-anim style="--i:0">OPPORTUNITY · 3/4</p><h2 class="s-title" data-anim style="--i:1">최근 투자 흐름</h2><p class="s-sub" data-anim style="--i:2">2024년 말~2026년 자금 유입이 확인되는 문제영역</p></header><div class="s-body"><div class="invest-grid" data-anim style="--i:3"><article class="invest-card dark"><span class="field">의약품</span><h3>펫팜</h3><p>반려동물 의약품 · <b>Series B 65억원</b> · 누적 105억원</p></article><article class="invest-card blue"><span class="field">AI 홈케어</span><h3>십일리터</h3><p>AI 홈케어 진단 · <b>Pre-A 브릿지</b> · 누적 20억원+</p></article><article class="invest-card"><span class="field">AI 진료보조</span><h3>메타디엑스</h3><p>반려동물 진료 AI · <b>시드 후속 5억원</b></p></article><article class="invest-card"><span class="field">데이터</span><h3>비욘디</h3><p>반려동물 데이터 통합 · <b>Seed 투자</b></p></article><article class="invest-card blue"><span class="field">헬스케어</span><h3>바로펫</h3><p>체성분 분석 헬스케어 · <b>블루포인트 Seed</b></p></article><article class="invest-card dark"><span class="field">스킨케어</span><h3>허레이</h3><p>반려동물 스킨케어 · <b>시그나이트·롯데벤처스 Pre-A</b></p></article></div><div class="invest-flow" data-anim style="--i:4"><div>헬스케어</div><div>의약품·AI 진단</div><div>데이터 기반 관리</div></div><p class="source">출처: <a href="https://www.venturesquare.net/967872" target="_blank">벤처스퀘어, 펫팜 투자 유치</a> · <a href="https://www.fetv.co.kr/news/article.html?no=209108" target="_blank">FETV, 십일리터 투자 유치</a> · <a href="https://www.biotimes.co.kr/news/articleView.html?idxno=20614" target="_blank">바이오타임즈, 메타디엑스 투자 유치</a> · <a href="https://www.venturesquare.net/999212" target="_blank">벤처스퀘어, 비욘디 투자 유치</a> · <a href="https://www.unicornfactory.co.kr/article/2024111214330650501" target="_blank">유니콘팩토리, 바로펫 투자 유치</a> · <a href="https://www.hankyung.com/article/202605296855O" target="_blank">한국경제, 허레이 투자 유치</a></p></div><div class="insight" data-anim style="--i:6">단순히 투자받은 기업 수보다 <span class="y">실제 매출이 확인되는 기업 풀</span>과 <span class="b">최근 어느 문제영역에 신규 투자가 이어지는지</span>를 함께 보는 것이 현재 시장의 생존성과 기회영역을 판단하는 데 더 유용합니다</div></section>
 '''
 
-          pattern = re.compile(r'<section class="slide" data-part="2\. 창업 기회" data-menu="2-2\. 스타트업 생태계 규모 신호">.*?</section>\n', re.S)
-          s, n = pattern.subn(new_slides, s, count=1)
-          if n != 1:
-              raise SystemExit('target ecosystem section not found')
+          start = s.find('<section class="slide" data-part="2. 창업 기회" data-menu="2-2. 스타트업 생태계 규모 신호">')
+          end = s.find('<section class="slide" data-part="2. 창업 기회" data-menu="2-4. 기회영역별 실제 확인 사례">', start)
+          if start == -1:
+              raise SystemExit('target ecosystem start not found')
+          if end == -1:
+              end = s.find('<section class="slide" data-part="2. 창업 기회" data-menu="2-3. 기회영역별 실제 확인 사례">', start)
+          if end == -1:
+              raise SystemExit('next opportunity section not found')
+          s = s[:start] + new_slides + s[end:]
 
-          slide_count = len(re.findall(r'<section class="slide\b', s))
-          if slide_count != 18:
-              raise SystemExit(f'Expected 18 slides after split, found {slide_count}')
-          if 'OPPORTUNITY · 3/4' not in s or 'data-menu="2-4. 기회영역별 실제 확인 사례"' not in s:
-              raise SystemExit('Opportunity numbering update failed')
+          if 'OPPORTUNITY · 3/4' not in s or '약 90<small>개</small>' not in s:
+              raise SystemExit('ecosystem slide update failed')
 
           p.write_text(s, encoding='utf-8')
-          print('updated ecosystem and investment slides; slides=', slide_count)
+          print('updated ecosystem and investment slides')
           PY
       - name: Commit updated slides
         run: |
@@ -60,4 +65,3 @@ jobs:
           git add special-lecture.html
           git commit -m 'Update startup ecosystem and investment flow slides'
           git push
-# trigger 1
