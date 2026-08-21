@@ -1,9 +1,7 @@
 name: Sync special lecture design
 on:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/sync-special-lecture-design.yml'
+  issues:
+    types: [opened]
 permissions:
   contents: write
 jobs:
@@ -120,4 +118,3 @@ jobs:
           git add special-lecture.html
           git commit -m 'Sync special lecture case colors and grid'
           git push
-# trigger 1
