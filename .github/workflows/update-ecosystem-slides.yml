@@ -30,7 +30,6 @@ jobs:
               else:
                   s = s.replace('</style>', css + '\n</style>', 1)
 
-          # Opportunity numbering after split
           s = s.replace('OPPORTUNITY · 1/3', 'OPPORTUNITY · 1/4')
           s = s.replace('OPPORTUNITY · 3/3', 'OPPORTUNITY · 4/4')
           s = s.replace('data-menu="2-3. 기회영역별 실제 확인 사례"', 'data-menu="2-4. 기회영역별 실제 확인 사례"')
@@ -61,3 +60,4 @@ jobs:
           git add special-lecture.html
           git commit -m 'Update startup ecosystem and investment flow slides'
           git push
+# trigger 1
