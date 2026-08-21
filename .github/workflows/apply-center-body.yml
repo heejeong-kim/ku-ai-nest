@@ -1,0 +1,42 @@
+name: Apply center body alignment
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'tmp-center-body.txt'
+permissions:
+  contents: write
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Center slide body content
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('special-lecture.html')
+          s = p.read_text(encoding='utf-8')
+          marker = '/* center-body-alignment-v1 */'
+          css = r'''
+/* center-body-alignment-v1 */
+.slide:not(.cover):not(.close)>.s-head{min-height:auto!important;margin-bottom:22px!important}
+.slide:not(.cover):not(.close)>.s-body{justify-content:center!important;padding-top:0!important;padding-bottom:0!important}
+.slide:not(.cover):not(.close)>.insight{margin-top:18px!important}
+.case-slide .s-body{justify-content:center!important;padding-top:0!important;padding-bottom:0!important}
+.case-slide .case-layout{height:auto!important;min-height:0!important}
+.case-slide .case-profile{height:auto!important}
+.case-slide .case-analysis{height:auto!important}
+'''
+          if marker not in s:
+              s = s.replace('</style>', css + '\n</style>', 1)
+          p.write_text(s, encoding='utf-8')
+          PY
+      - name: Commit changes
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add special-lecture.html
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Center align special lecture slide body'
+          git push
