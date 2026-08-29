@@ -14,6 +14,12 @@
   const pattern=/<details><summary>\[참고\] GitHub Pages로 웹 MVP 배포하기<\/summary><div class="details-body">[\s\S]*?<\/div><\/details>/;
   if(!pattern.test(html)) throw new Error('GitHub Pages 안내 영역을 찾지 못했습니다.');
   html=html.replace(pattern,replacement);
+
+  const deliverablesPattern=/(<h4>6\.3 최종 산출물 목록<\/h4>)<ul>[\s\S]*?<\/ul><ul class="checklist">[\s\S]*?<\/ul>/;
+  const deliverablesReplacement=`$1<ul><li><b>[필수]</b> 최종 사업계획서 1페이지</li><li><b>[필수]</b> AI 기능이 실제 작동하는 웹 MVP 링크 또는 실행 화면</li><li><b>[옵션]</b> Google Sheets 검증 데이터 링크</li><li><b>[옵션]</b> 시장·고객·경쟁 분석의 핵심 근거와 공식데이터 출처</li><li><b>[옵션]</b> 추가 검증 필요·후속 개발 항목</li></ul>`;
+  if(!deliverablesPattern.test(html)) throw new Error('6.3 최종 산출물 목록 영역을 찾지 못했습니다.');
+  html=html.replace(deliverablesPattern,deliverablesReplacement);
+
   document.open();
   document.write(html);
   document.close();
