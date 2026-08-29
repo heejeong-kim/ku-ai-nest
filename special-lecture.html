@@ -8,13 +8,47 @@
 <body>
 <script>
 (async()=>{
-  const response=await fetch('./special-lecture-original.html?v=20260829-layoutfix1');
+  const response=await fetch('./special-lecture-original.html?v=20260829-layoutfix2');
   if(!response.ok) throw new Error('발표자료 원본을 불러오지 못했습니다.');
   let html=await response.text();
   const fix=`<style>
-/* 3페이지 레이아웃 보정: 서브 텍스트와 본문 카드 겹침 방지 */
-.slide:nth-of-type(3) > .s-head{margin-bottom:46px!important;position:relative;z-index:3;}
-.slide:nth-of-type(3) > .s-body{justify-content:flex-start!important;position:relative;z-index:1;}
+/* 3페이지 레이아웃 보정 */
+.slide:nth-of-type(3) > .s-head{
+  margin-bottom:34px!important;
+  position:relative;
+  z-index:3;
+}
+.slide:nth-of-type(3) > .s-body{
+  justify-content:flex-start!important;
+  position:relative;
+  z-index:1;
+}
+
+/* 3페이지 하단 업종 차트 높이 축소 */
+.slide:nth-of-type(3) > .s-body > .panel{
+  margin-top:12px!important;
+  padding:16px 24px 18px!important;
+}
+.slide:nth-of-type(3) .mix{
+  padding:0 12px!important;
+  gap:22px!important;
+}
+.slide:nth-of-type(3) .mix-row{
+  gap:6px 10px!important;
+}
+.slide:nth-of-type(3) .mix-track{
+  height:140px!important;
+  border-radius:12px 12px 7px 7px!important;
+}
+.slide:nth-of-type(3) .mix-fill{
+  border-radius:10px 10px 5px 5px!important;
+}
+.slide:nth-of-type(3) .mix-row:nth-child(1) .mix-fill{height:44.5%!important;}
+.slide:nth-of-type(3) .mix-row:nth-child(2) .mix-fill{height:23.8%!important;}
+.slide:nth-of-type(3) .mix-row:nth-child(3) .mix-fill{height:11.4%!important;}
+.slide:nth-of-type(3) .source{
+  margin-top:8px!important;
+}
 </style>`;
   html=html.replace('</head>',fix+'</head>');
   document.open();
